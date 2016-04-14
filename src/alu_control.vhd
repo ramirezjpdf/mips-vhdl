@@ -2,6 +2,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+use alu_control_const.all;
+
 entity alu_control is
 	port(alu_op : in std_logic_vector (1 downto 0);
 		 funct  : in std_logic_vector (5 downto 0);
@@ -15,15 +17,34 @@ begin
 	process(alu_op, funct)
 	begin
 		case alu_op is
-			when "00" => alu_control_out_signal <= "0010";
-			when "01" => alu_control_out_signal <= "0110";
-			when "10" =>
+			when LW_OR_SW    => alu_control_out_signal <= ADD_CONTROL;
+			when BEQ_OR_BNE  => alu_control_out_signal <= SUB_CONTROL;
+			when R_TYPE_INST =>
 				case funct is
-					when "100000" => alu_control_out_signal <= "0010";
-					when "100010" => alu_control_out_signal <= "0110";
-					when "100100" => alu_control_out_signal <= "0000";
-					when "100101" => alu_control_out_signal <= "0001";
-					when "101010" => alu_control_out_signal <= "0111";
+					-- add
+					when ADD_FUNCT => 
+						alu_control_out_signal <= ADD_CONTROL;
+					-- sub
+					when SUB_FUNCT => 
+						alu_control_out_signal <= SUB_CONTROL;
+					-- and
+					when AND_FUNCT => 
+						alu_control_out_signal <= AND_CONTROL;
+					-- or
+					when OR_FUNCT  => 
+						alu_control_out_signal <= OR_CONTROL;
+					-- nor
+					when NOR_FUNCT => 
+						alu_control_out_signal <= NOR_CONTROL;
+					-- slt
+					when SLT_FUNCT => 
+						alu_control_out_signal <= SLT_CONTROL;
+					-- sll
+					when SLL_FUNCT => 
+						alu_control_out_signal <= SLL_CONTROL;
+					-- srl
+					when SRL_FUNCT => 
+						alu_control_out_signal <= SRL_CONTROL;
 					when others => alu_control_out_signal <= 'X';
 				end case;
 			when others => alu_control_out_signal <= 'X';

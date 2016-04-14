@@ -3,35 +3,42 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+use alu_control_const.all;
+
 entity alu is
 	port(
-		a, b   : in std_logic_vector(31 downto 0);
-		alu_op : in std_logic_vector(3 downto 0);
-		zero   : out std_logic;
-		result : out std_logic_vector(31 downto 0)
+		a, b           : in std_logic_vector(31 downto 0);
+		shamt          : in std_logic_vector(4 downto 0);
+		alu_control_in : in std_logic_vector(3 downto 0);
+		zero           : out std_logic;
+		result         : out std_logic_vector(31 downto 0)
 	);
 end alu;
 
 architecture behav of alu is
+
 signal res_aux : std_logic_vector (31 downto 0);
 begin
-
-	process(a, b, alu_op)
+	process(a, b, alu_control_in, shamt)
 	begin
-		case alu_op is
-		when "0000" => res_aux <= a and b;
-		when "0001" => res_aux <= a or b;
-		when "1100" => res_aux <= not a or b;
-		when "0111" => 
+		case alu_control_in is
+		when AND_CONTROL => res_aux <= a and b;
+		when OR_CONTROL  => res_aux <= a or b;
+		when NOR_CONTROL => res_aux <= not a or b;
+		when SLT_CONTROL => 
 			if signed(a) < signed(b)) then
-				result <= x"00000001";
+				res_aux <= x"00000001";
 			else
-				result <= x"00000000";
+				res_aux <= x"00000000";
 			end if;
-		when "0010" => res_aux <=
+		when ADD_CONTROL => res_aux <=
 					    std_logic_vector(signed(a) + signed(b));
-		when "0110" => res_aux <=
+		when SUB_CONTROL => res_aux <=
 					    std_logic_vector(signed(a) - signed(b));
+		when SLL_CONTROL => res_aux <=
+					    b << unsigned(shamt);
+		when SRL_CONTROL => res_aux <=
+					    b >> unsigned(shamt);
 		when others => res_aux <= 'X';
 		end case;
 
