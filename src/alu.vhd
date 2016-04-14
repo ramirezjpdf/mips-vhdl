@@ -3,7 +3,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use alu_control_const.all;
+
+use work.alu_control_const.all;
 
 entity alu is
 	port(
@@ -26,20 +27,24 @@ begin
 		when OR_CONTROL  => res_aux <= a or b;
 		when NOR_CONTROL => res_aux <= not a or b;
 		when SLT_CONTROL => 
-			if signed(a) < signed(b)) then
+			if signed(a) < signed(b) then
 				res_aux <= x"00000001";
 			else
 				res_aux <= x"00000000";
 			end if;
 		when ADD_CONTROL => res_aux <=
-					    std_logic_vector(signed(a) + signed(b));
+				     std_logic_vector(signed(a) + signed(b));
 		when SUB_CONTROL => res_aux <=
-					    std_logic_vector(signed(a) - signed(b));
+				     std_logic_vector(signed(a) - signed(b));
 		when SLL_CONTROL => res_aux <=
-					    b << unsigned(shamt);
+			     	     std_logic_vector(
+                                     signed(b) sll to_integer(unsigned(shamt))
+                                     );
 		when SRL_CONTROL => res_aux <=
-					    b >> unsigned(shamt);
-		when others => res_aux <= 'X';
+				     std_logic_vector(
+                                     signed(b) srl to_integer(unsigned(shamt))
+                                     );
+		when others => res_aux <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 		end case;
 
 		case res_aux is

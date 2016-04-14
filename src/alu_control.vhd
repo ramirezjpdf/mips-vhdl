@@ -2,10 +2,11 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use alu_control_const.all;
+use work.alu_control_const.all;
 
 entity alu_control is
-	port(alu_op : in std_logic_vector (1 downto 0);
+	port(
+		 alu_op : in std_logic_vector (1 downto 0);
 		 funct  : in std_logic_vector (5 downto 0);
 		 alu_control_out_signal : out std_logic_vector(3 downto 0)
 	);
@@ -45,9 +46,9 @@ begin
 					-- srl
 					when SRL_FUNCT => 
 						alu_control_out_signal <= SRL_CONTROL;
-					when others => alu_control_out_signal <= 'X';
+					when others => alu_control_out_signal <= "XXXX";
 				end case;
-			when others => alu_control_out_signal <= 'X';
+			when others => alu_control_out_signal <= "XXXX";
 		end case;
 	end process;
 end behav;

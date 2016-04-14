@@ -29,9 +29,6 @@ package alu_control_const is
 	constant SLT_FUNCT : std_logic_vector (5 downto 0) := "101010";
 	constant ADD_FUNCT : std_logic_vector (5 downto 0) := "100000";
 	constant SUB_FUNCT : std_logic_vector (5 downto 0) := "100010";
-	constant SLL_FUNCT : std_logic_vector (3 downto 0) := "000000";
-	constant SRL_FUNCT : std_logic_vector (3 downto 0) := "000010";
-end alu_control_const;
-
-package body alu_control_const is
+	constant SLL_FUNCT : std_logic_vector (5 downto 0) := "000000";
+	constant SRL_FUNCT : std_logic_vector (5 downto 0) := "000010";
 end alu_control_const;
