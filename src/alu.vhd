@@ -13,22 +13,33 @@ entity alu is
 end alu;
 
 architecture behav of alu is
-
+signal res_aux : std_logic_vector (31 downto 0);
 begin
 
 	process(a, b, alu_op)
 	begin
-		zero <= '0';
 		case alu_op is
-		when "0000" => result <= a and b;
-		when "0001" => result <= a or b;
+		when "0000" => res_aux <= a and b;
+		when "0001" => res_aux <= a or b;
+		when "1100" => res_aux <= not a or b;
 		when "0111" => 
-			if to_integer(unsigned(a)) < to_integer(unsgined(b)) then
+			if signed(a) < signed(b)) then
 				result <= x"00000001";
 			else
 				result <= x"00000000";
 			end if;
-		
+		when "0010" => res_aux <=
+					    std_logic_vector(signed(a) + signed(b));
+		when "0110" => res_aux <=
+					    std_logic_vector(signed(a) - signed(b));
+		when others => res_aux <= 'X';
 		end case;
+
+		case res_aux is
+			when x"00000000" => zero <= '0';
+			when others => zero <= '1';
+		end case;
+
+		result <= res_aux;
 	end process;
 end behav;
