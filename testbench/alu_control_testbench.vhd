@@ -22,56 +22,56 @@ architecture behav of alu_control_testbench is
 begin
 
 	ac_test : alu_control port map(alu_op => t_alu_op,
-                                   func => t_func);
+                                   funct => t_funct);
 	process
 	begin
 		t_alu_op <= LW_OR_SW;
-		t_func   <= "--";
+		t_funct   <= "------";
 		
 		wait for 1 ns;
 		
 		t_alu_op <= BEQ_OR_BNE;
-		t_func   <= "--";
+		t_funct   <= "------";
 		
 		wait for 1 ns;
 		
 		t_alu_op <= R_TYPE_INST;
-		t_func   <= AND_FUNCT;
+		t_funct   <= AND_FUNCT;
 		
 		wait for 1 ns;
 		
 		t_alu_op <= R_TYPE_INST;
-		t_func   <= OR_FUNCT;
+		t_funct   <= OR_FUNCT;
 		
 		wait for 1 ns;
 		
 		t_alu_op <= R_TYPE_INST;
-		t_func   <= NOR_FUNCT;
+		t_funct   <= NOR_FUNCT;
 		
 		wait for 1 ns;
 		
 		t_alu_op <= R_TYPE_INST;
-		t_func   <= SLT_FUNCT;
+		t_funct   <= SLT_FUNCT;
 		
 		wait for 1 ns;
 		
 		t_alu_op <= R_TYPE_INST;
-		t_func   <= ADD_FUNCT;
+		t_funct   <= ADD_FUNCT;
 		
 		wait for 1 ns;
 		
 		t_alu_op <= R_TYPE_INST;
-		t_func   <= SUB_FUNCT;
+		t_funct   <= SUB_FUNCT;
 		
 		wait for 1 ns;
 		
 		t_alu_op <= R_TYPE_INST;
-		t_func   <= SLL_FUNCT;
+		t_funct   <= SLL_FUNCT;
 		
 		wait for 1 ns;
 		
 		t_alu_op <= R_TYPE_INST;
-		t_func   <= SRL_FUNCT;
+		t_funct   <= SRL_FUNCT;
 		
 		wait for 1 ns;
 		
