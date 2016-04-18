@@ -54,12 +54,12 @@ begin
     process (CLK) is
     begin
         if rising_edge(CLK) then
-            ReadData1 <= reg_file(to_integer(ReadAddrs1));
-            ReadData2 <= reg_file(to_integer(ReadAddrs2));
+            ReadData1 <= reg_file(to_integer(unsigned(ReadAddrs1)));
+            ReadData2 <= reg_file(to_integer(unsigned(ReadAddrs2)));
         
             if ((RegWrite = '1') and (WriteAddrs /= "0000")) then
                 --temp <= to_integer(WriteAddrs);
-                reg_file(to_integer(WriteAddrs)) <= WriteData;
+                reg_file(to_integer(unsigned(WriteAddrs))) <= WriteData;
             end if;
         end if;
         
