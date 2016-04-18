@@ -35,10 +35,10 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity Register_v2 is
     Port ( CLK : in STD_LOGIC;
-           RegWrite : in BIT;
-           ReadAddrs1 : in STD_LOGIC_VECTOR (3 downto 0);
-           ReadAddrs2 : in STD_LOGIC_VECTOR (3 downto 0);
-           WriteAddrs : in STD_LOGIC_VECTOR (3 downto 0);
+           RegWrite : in STD_LOGIC;
+           ReadAddrs1 : in STD_LOGIC_VECTOR (4 downto 0);
+           ReadAddrs2 : in STD_LOGIC_VECTOR (4 downto 0);
+           WriteAddrs : in STD_LOGIC_VECTOR (4 downto 0);
            WriteData : in STD_LOGIC_VECTOR (31 downto 0);
            ReadData1 : out STD_LOGIC_VECTOR (31 downto 0);
            ReadData2 : out STD_LOGIC_VECTOR (31 downto 0));
@@ -57,7 +57,7 @@ begin
             ReadData1 <= reg_file(to_integer(unsigned(ReadAddrs1)));
             ReadData2 <= reg_file(to_integer(unsigned(ReadAddrs2)));
         
-            if ((RegWrite = '1') and (WriteAddrs /= "0000")) then
+            if ((RegWrite = '1') and (WriteAddrs /= "00000")) then
                 --temp <= to_integer(WriteAddrs);
                 reg_file(to_integer(unsigned(WriteAddrs))) <= WriteData;
             end if;
