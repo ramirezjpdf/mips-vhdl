@@ -48,7 +48,7 @@ architecture Behavioral of Register_v2 is
 
     type reg is array(31 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
     signal reg_file : reg;
-    signal temp : integer;
+    --signal temp : integer;
 
 begin
     process (CLK) is
@@ -58,8 +58,8 @@ begin
             ReadData2 <= reg_file(to_integer(ReadAddrs2));
         
             if ((RegWrite = '1') and (WriteAddrs /= "0000")) then
-                temp <= to_integer(WriteAddrs(0));
-                reg_file(temp) <= WriteData;
+                --temp <= to_integer(WriteAddrs);
+                reg_file(to_integer(WriteAddrs)) <= WriteData;
             end if;
         end if;
         
