@@ -12,3 +12,5 @@ alu_control
 
 # vcd files
 *.vcd
+
+*.*~
