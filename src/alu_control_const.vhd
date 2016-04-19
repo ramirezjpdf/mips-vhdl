@@ -31,4 +31,15 @@ package alu_control_const is
 	constant SUB_FUNCT : std_logic_vector (5 downto 0) := "100010";
 	constant SLL_FUNCT : std_logic_vector (5 downto 0) := "000000";
 	constant SRL_FUNCT : std_logic_vector (5 downto 0) := "000010";
+
+	-- REGISTER FILE
+	constant REG_ZERO_ADDRS : std_logic_vector (4 downto 0) := "00000";
+	type reg is array(31 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
+	constant REG_INIT_STATE : reg := (
+	(x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"),
+        (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"),
+	(x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"),
+	(x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000")
+	);
 end alu_control_const;
+
