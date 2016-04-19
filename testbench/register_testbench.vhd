@@ -35,14 +35,14 @@ begin
             t_CLK <= '1';
             t_RegWrite <= '1';
             if (temp = "00000") then
-                t_ReadAddrs1 <= "00000";
+                t_ReadAddrs1 <= "00000"; -- this if avoid read addres -1
                 t_ReadAddrs2 <= "00000";
             else
                 t_ReadAddrs1 <= temp;
                 t_ReadAddrs2 <= std_logic_vector(unsigned(temp) - "0001");
             end if;
             t_WriteAddrs <= temp;
-            t_WriteData <= x"00000000";
+            t_WriteData <= x"00000001";
             temp <= std_logic_vector(unsigned(temp) + "0001");
             
             wait for 1 ns;
@@ -97,3 +97,4 @@ begin
     REG1 : Register_v2 port map (t_CLK, t_RegWrite, t_ReadAddrs1, t_ReadAddrs2, t_WriteAddrs, t_WriteData, t_ReadData1, t_ReadData2);
     
 end behav;
+
