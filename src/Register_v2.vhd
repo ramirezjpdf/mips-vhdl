@@ -22,7 +22,8 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
---use work.TYPES.all;
+
+use work.alu_control_const.all;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -46,9 +47,7 @@ end Register_v2;
 
 architecture Behavioral of Register_v2 is
 
-    type reg is array(31 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
-    signal reg_file : reg;
-    --signal temp : integer;
+    signal reg_file : reg := REG_INIT_STATE; --initialize registers with zeros
 
 begin
     process (CLK) is
@@ -57,12 +56,12 @@ begin
             ReadData1 <= reg_file(to_integer(unsigned(ReadAddrs1)));
             ReadData2 <= reg_file(to_integer(unsigned(ReadAddrs2)));
         
-            --if ((RegWrite = '1') and (WriteAddrs /= "0000")) then
-                --temp <= to_integer(unsigned(WriteAddrs));
+            if ((RegWrite = '1') and (WriteAddrs /= REG_ZERO_ADDRS)) then
                 reg_file(to_integer(unsigned(WriteAddrs))) <= WriteData;
-            --end if;
+            end if;
         end if;
         
     end process;
 
 end Behavioral;
+
