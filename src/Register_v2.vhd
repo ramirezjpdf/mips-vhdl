@@ -57,10 +57,10 @@ begin
             ReadData1 <= reg_file(to_integer(unsigned(ReadAddrs1)));
             ReadData2 <= reg_file(to_integer(unsigned(ReadAddrs2)));
         
-            if ((RegWrite = '1') and (WriteAddrs /= "00000")) then
-                --temp <= to_integer(WriteAddrs);
+            --if ((RegWrite = '1') and (WriteAddrs /= "0000")) then
+                --temp <= to_integer(unsigned(WriteAddrs));
                 reg_file(to_integer(unsigned(WriteAddrs))) <= WriteData;
-            end if;
+            --end if;
         end if;
         
     end process;
