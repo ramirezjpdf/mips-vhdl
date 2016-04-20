@@ -1,0 +1,49 @@
+20/04/2016
+
+Instruction jr -> PCWriteCond = '0'
+                  PCWrite = '1',
+                  IorD = '0'
+                  MemRead = '0'
+                  MemWrite = '0'
+                  MemToReg = X
+                  IRWrite = '0'
+                  RegWrite = '0',
+                  RegDst = X
+                  ALUop = X, 
+                  ALUSrcA = '0', 
+                  ALUSrcB = "00", 
+                  PCSource = "00"
+                  
+-- In this instruction the  porcessor needs to put the value of PC+4 in the register $ra beside jump to the especified address.
+Instruction jal -> PCWriteCond = '0'
+                  PCWrite = '1',
+                  IorD = '0'
+                  MemRead = '0'
+                  MemWrite = '0'
+                  MemToReg = "10"   -- Add new case to force the value of PC+4.
+                  IRWrite = '0'
+                  RegWrite = '1',
+                  RegDst = '10'     -- Add new case to force the address of register $ra.
+                  ALUop = X, 
+                  ALUSrcA = X, 
+                  ALUSrcB = X, 
+                  PCSource = "10"
+                  
+Instruction bnq -> Think!!!
+
+Instruction Addi -> PCWriteCond = '0' 
+                  PCWrite = '0',
+                  IorD = '0'  -- state 1
+                  MemRead = '0'
+                  MemWrite = '0'
+                  MemToReg = "X"   -- state 2
+                  MemToReg = "0"   -- state 4
+                  IRWrite = '0'
+                  RegWrite = '0',  -- state 2
+                  RegWrite = '1',  -- state 4
+                  RegDst = '10'     -- state 2
+                  RegDst = '00'     -- state 4
+                  ALUop = '00', 
+                  ALUSrcA = '1',   --state 2
+                  ALUSrcB = '10',  --state 2
+                  PCSource = "X"
