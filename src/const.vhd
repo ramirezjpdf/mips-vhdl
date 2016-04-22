@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-package alu_control_const is
+package const is
 	-- ALU CONTROL
 	constant AND_CONTROL : std_logic_vector (3 downto 0) := "0000";
 	constant OR_CONTROL  : std_logic_vector (3 downto 0) := "0001";
@@ -41,5 +41,15 @@ package alu_control_const is
 	(x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"),
 	(x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000")
 	);
-end alu_control_const;
+	
+	-- OP CODES
+	constant R_TYPE : std_logic_vector (5 downto 0) := "000000";
+	constant LW     : std_logic_vector (5 downto 0) := "100011";
+	constant SW     : std_logic_vector (5 downto 0) := "101011";
+	constant BEQ    : std_logic_vector (5 downto 0) := "000100";
+	constant BNE    : std_logic_vector (5 downto 0) := "000101";
+	constant J      : std_logic_vector (5 downto 0) := "000010";
+	constant JAL    : std_logic_vector (5 downto 0) := "000011";
+	constant ADDI   : std_logic_vector (5 downto 0) := "001000";
+end const;
 
