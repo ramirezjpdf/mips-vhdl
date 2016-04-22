@@ -4,7 +4,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 
-use work.alu_control_const.all;
+use work.const.all;
 
 entity alu is
 	port(
