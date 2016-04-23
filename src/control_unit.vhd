@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity control_unit is
     port(
         clk     : in std_logic;
-        op_code ; in std_logic_vector (5 downto 0);
+        op_code : in std_logic_vector (5 downto 0);
         
         pc_write_cond : out std_logic;
         pc_write      : out std_logic;
@@ -124,6 +124,187 @@ begin
 
     output_function : process(current_state)
     begin
+		case current_state is
+			-- GENERAL STATES
+			when INSTRUCTION_FETCH    =>
+				pc_write_cond <= DEASSERTED;
+				pc_write      <= ASSERTED;
+				i_or_d        <= DEASSERTED;
+				mem_read      <= ASSERTED;
+				mem_write     <= DEASSERTED;
+				mem_to_reg    <= ALU_OUT_MEM_TO_REG;
+				ir_write      <= ASSERTED;
+				reg_write     <= DEASSERTED;
+				reg_dst       <= RT_REG_DST;
+				alu_op        <= LW_OR_SW_ADD;
+				alu_src_a     <= DEASSERTED;
+				alu_src_b     <= FOUR_ALU_SRC_B;
+				pc_source     <= ALU_RESULT_PC_SOURCE;
+			when INST_DECODE_REG_READ =>
+				pc_write_cond <= DEASSERTED; 
+			    pc_write      <= DEASSERTED;
+			    i_or_d        <= DEASSERTED;
+			    mem_read      <= DEASSERTED;
+			    mem_write     <= DEASSERTED;
+			    mem_to_reg    <= ALU_OUT_MEM_TO_REG;
+			    ir_write      <= DEASSERTED;
+			    reg_write     <= DEASSERTED;
+			    reg_dst       <= RT_REG_DST;
+			    alu_op        <= LW_OR_SW_ADD;
+			    alu_src_a     <= DEASSERTED;
+			    alu_src_b     <= BRANCH_ADDR_ALU_SRC_B;
+			    pc_source     <= ALU_RESULT_PC_SOURCE;
+			-- LW OR SW STATES        =>
+			when MEM_ADDR_COMP        =>
+				pc_write_cond <= DEASSERTED; 
+			    pc_write      <= DEASSERTED;
+			    i_or_d        <= DEASSERTED;
+			    mem_read      <= DEASSERTED;
+			    mem_write     <= DEASSERTED;
+			    mem_to_reg    <= ALU_OUT_MEM_TO_REG;
+			    ir_write      <= DEASSERTED;
+			    reg_write     <= DEASSERTED;
+			    reg_dst       <= RT_REG_DST;
+			    alu_op        <= LW_OR_SW_ADD;
+			    alu_src_a     <= ASSERTED;
+			    alu_src_b     <= IMMED_ALU_SRC_B;
+			    pc_source     <= ALU_RESULT_PC_SOURCE;
+			when LW_MEM_ACCES         =>
+				pc_write_cond <= DEASSERTED; 
+			    pc_write      <= DEASSERTED;
+			    i_or_d        <= ASSERTED;
+			    mem_read      <= ASSERTED;
+			    mem_write     <= DEASSERTED;
+			    mem_to_reg    <= ALU_OUT_MEM_TO_REG;
+			    ir_write      <= DEASSERTED;
+			    reg_write     <= DEASSERTED;
+			    reg_dst       <= RT_REG_DST;
+			    alu_op        <= LW_OR_SW_ADD;
+			    alu_src_a     <= DEASSERTED;
+			    alu_src_b     <= B_ALU_SRC_B;
+			    pc_source     <= ALU_RESULT_PC_SOURCE;
+			when MEM_READ_COMPLETION  =>
+				pc_write_cond <= DEASSERTED; 
+			    pc_write      <= DEASSERTED;
+			    i_or_d        <= DEASSERTED;
+			    mem_read      <= DEASSERTED;
+			    mem_write     <= DEASSERTED;
+			    mem_to_reg    <= MDR_MEM_TO_REG;
+			    ir_write      <= DEASSERTED;
+			    reg_write     <= ASSERTED;
+			    reg_dst       <= RT_REG_DST;
+			    alu_op        <= LW_OR_SW_ADD;
+			    alu_src_a     <= DEASSERTED;
+			    alu_src_b     <= B_ALU_SRC_B;
+			    pc_source     <= ALU_RESULT_PC_SOURCE;
+			when SW_MEM_ACCES         =>
+				pc_write_cond <= DEASSERTED; 
+			    pc_write      <= DEASSERTED;
+			    i_or_d        <= ASSERTED;
+			    mem_read      <= DEASSERTED;
+			    mem_write     <= ASSERTED;
+			    mem_to_reg    <= ALU_OUT_MEM_TO_REG;
+			    ir_write      <= DEASSERTED;
+			    reg_write     <= DEASSERTED;
+			    reg_dst       <= RT_REG_DST;
+			    alu_op        <= LW_OR_SW_ADD;
+			    alu_src_a     <= DEASSERTED;
+			    alu_src_b     <= B_ALU_SRC_B;
+			    pc_source     <= ALU_RESULT_PC_SOURCE;
+			-- R-TYPE ARITH AND LOGIC STATES
+			when EXECUTION            =>
+				pc_write_cond <= DEASSERTED; 
+			    pc_write      <= DEASSERTED;
+			    i_or_d        <= DEASSERTED;
+			    mem_read      <= DEASSERTED;
+			    mem_write     <= DEASSERTED;
+			    mem_to_reg    <= ALU_OUT_MEM_TO_REG;
+			    ir_write      <= DEASSERTED;
+			    reg_write     <= DEASSERTED;
+			    reg_dst       <= RT_REG_DST;
+			    alu_op        <= R_TYPE_INST;
+			    alu_src_a     <= ASSERTED;
+			    alu_src_b     <= B_ALU_SRC_B;
+			    pc_source     <= ALU_RESULT_PC_SOURCE;
+			when R_TYPE_COMPLETION    =>
+				pc_write_cond <= DEASSERTED; 
+			    pc_write      <= DEASSERTED;
+			    i_or_d        <= DEASSERTED;
+			    mem_read      <= DEASSERTED;
+			    mem_write     <= DEASSERTED;
+			    mem_to_reg    <= ALU_OUT_MEM_TO_REG;
+			    ir_write      <= DEASSERTED;
+			    reg_write     <= ASSERTED;
+			    reg_dst       <= RD_REG_DST;
+			    alu_op        <= LW_OR_SW_ADD;
+			    alu_src_a     <= ASSERTED;
+			    alu_src_b     <= B_ALU_SRC_B;
+			    pc_source     <= ALU_RESULT_PC_SOURCE;
+			-- BRANCH STATES    
+			when BRANCH_COMPLETION    =>
+				pc_write_cond <= ASSERTED; 
+			    pc_write      <= DEASSERTED;
+			    i_or_d        <= DEASSERTED;
+			    mem_read      <= DEASSERTED;
+			    mem_write     <= DEASSERTED;
+			    mem_to_reg    <= ALU_OUT_MEM_TO_REG;
+			    ir_write      <= DEASSERTED;
+			    reg_write     <= DEASSERTED;
+			    reg_dst       <= RT_REG_DST;
+			    alu_op        <= BEQ_OR_BNE_SUB;
+			    alu_src_a     <= ASSERTED;
+			    alu_src_b     <= B_ALU_SRC_B;
+			    pc_source     <= ALU_OUT_PC_SOURCE;
+			-- JUMP STATES
+			when JUMP_COMPLETION      =>
+				pc_write_cond <= DEASSERTED; 
+			    pc_write      <= ASSERTED;
+			    i_or_d        <= DEASSERTED;
+			    mem_read      <= DEASSERTED;
+			    mem_write     <= DEASSERTED;
+			    mem_to_reg    <= ALU_OUT_MEM_TO_REG;
+			    ir_write      <= DEASSERTED;
+			    reg_write     <= DEASSERTED;
+			    reg_dst       <= RT_REG_DST;
+			    alu_op        <= LW_OR_SW_ADD;
+			    alu_src_a     <= ASSERTED;
+			    alu_src_b     <= B_ALU_SRC_B;
+			    pc_source     <= JUMP_PC_SOURCE;
+			when JAL_COMPLETION       =>
+				pc_write_cond <= DEASSERTED; 
+			    pc_write      <= ASSERTED;
+			    i_or_d        <= DEASSERTED;
+			    mem_read      <= DEASSERTED;
+			    mem_write     <= DEASSERTED;
+			    mem_to_reg    <= PC_MEM_TO_REG;
+			    ir_write      <= DEASSERTED;
+			    reg_write     <= ASSERTED;
+			    reg_dst       <= RA_REG_DST;
+			    alu_op        <= LW_OR_SW_ADD;
+			    alu_src_a     <= ASSERTED;
+			    alu_src_b     <= B_ALU_SRC_B;
+			    pc_source     <= JUMP_PC_SOURCE;
+			when JR_COMPLETION        =>
+			-- think about it better
+			-- the issue is that we need the funct
+			-- part of intruction to know how to
+			-- properly signalize this instruction
+			-- ADDI STATES
+			when ADDI_COMPLETION      =>
+				pc_write_cond <= DEASSERTED; 
+			    pc_write      <= DEASSERTED;
+			    i_or_d        <= DEASSERTED;
+			    mem_read      <= DEASSERTED;
+			    mem_write     <= DEASSERTED;
+			    mem_to_reg    <= ALU_OUT_MEM_TO_REG;
+			    ir_write      <= DEASSERTED;
+			    reg_write     <= ASSERTED;
+			    reg_dst       <= RT_REG_DST;
+			    alu_op        <= LW_OR_SW_ADD;
+			    alu_src_a     <= ASSERTED;
+			    alu_src_b     <= B_ALU_SRC_B;
+			    pc_source     <= ALU_RESULT_PC_SOURCE;
+		end case;
     
     end output_function;
 
