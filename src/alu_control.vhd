@@ -18,8 +18,8 @@ begin
 	process(alu_op, funct)
 	begin
 		case alu_op is
-			when LW_OR_SW    => alu_control_out_signal <= ADD_CONTROL;
-			when BEQ_OR_BNE  => alu_control_out_signal <= SUB_CONTROL;
+			when LW_OR_SW_ADD    => alu_control_out_signal <= ADD_CONTROL;
+			when BEQ_OR_BNE_SUB  => alu_control_out_signal <= SUB_CONTROL;
 			when R_TYPE_INST =>
 				case funct is
 					-- add
