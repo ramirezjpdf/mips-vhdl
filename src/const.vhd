@@ -42,9 +42,9 @@ package const is
     	(x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000")
     );
     
-    -- MEMORY
+    -- ROM TYPE MEMORY
     constant REG_ZERO_ADDRS : std_logic_vector (4 downto 0) := "00000";
-    type mem is array(1023 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
+    type rom_mem is array(1023 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
     --constant MEM_INIT_STATE : reg := (
     --	(x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"),
     --  (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"),
