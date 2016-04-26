@@ -45,18 +45,18 @@ end memory;
 
 architecture Behavioral of memory is
 
-    signal mips_memory : mem; --uninitialized memory
+    signal memory : rom_mem; --uninitialized memory
 
 begin
     process (CLK) is
     begin
         if rising_edge(CLK) then
 		if MemRead = '1' then
-            		ReadData <= mips_memory(to_integer(unsigned(Address)));
+            		ReadData <= memory(to_integer(unsigned(Address)));
             	end if
        	
             	if MemWrite = '1' then
-                	mips_memory(to_integer(unsigned(Address))) <= WriteData;
+                	memory(to_integer(unsigned(Address))) <= WriteData;
             	end if;
         end if;
         
