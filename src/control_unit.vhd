@@ -10,6 +10,7 @@ entity control_unit is
         op_code : in std_logic_vector (5 downto 0);
         
         pc_write_cond : out std_logic;
+        bne_cond      : out std_logic;
         pc_write      : out std_logic;
         i_or_d        : out std_logic;
         mem_read      : out std_logic;
@@ -42,7 +43,8 @@ constant ADDI_COMPLETION         : state := 12;
 constant EXECUTION               : state := 6;
 constant R_TYPE_COMPLETION       : state := 7;
 -- BRANCH STATES
-constant BRANCH_COMPLETION       : state := 8;
+constant BEQ_COMPLETION          : state := 8;
+constant BNE_COMPLETION          : state := 11;
 -- JUMP STATES
 constant JUMP_COMPLETION         : state := 9;
 constant JAL_COMPLETION          : state := 10;
@@ -65,8 +67,10 @@ begin
                             current_state <= MEM_ADDR_COMP_ADDI_EXEC;
                         when R_TYPE =>
                             current_state <= EXECUTION;
-                        when BEQ | BNE =>
-                            current_state <= BRANCH_COMPLETION;
+                        when BEQ =>
+                            current_state <= BEQ_COMPLETION;
+                        when BNE =>
+                            current_state <= BNE_COMPLETION;
                         when J =>
                             current_state <= JUMP_COMPLETION;
                         when JAL =>
@@ -99,7 +103,7 @@ begin
                     current_state <= INSTRUCTION_FETCH;
 
                 -- BRANCH STATES
-                when BRANCH_COMPLETION =>
+                when BEQ_COMPLETION | BNE_COMPLETION =>
                     current_state <= INSTRUCTION_FETCH;
 
                 -- JUMP STATES
@@ -119,6 +123,7 @@ begin
             -- GENERAL STATES
             when INSTRUCTION_FETCH    =>
                 pc_write_cond <= DEASSERTED;
+                bne_cond      <= DEASSERTED;
                 pc_write      <= ASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= ASSERTED;
@@ -133,6 +138,7 @@ begin
                 pc_source     <= ALU_RESULT_PC_SOURCE;
             when INST_DECODE_REG_READ =>
                 pc_write_cond <= DEASSERTED; 
+                bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= DEASSERTED;
@@ -149,6 +155,7 @@ begin
             -- LW OR SW AND ADDI  STATES
             when MEM_ADDR_COMP_ADDI_EXEC =>
                 pc_write_cond <= DEASSERTED; 
+                bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= DEASSERTED;
@@ -163,6 +170,7 @@ begin
                 pc_source     <= ALU_RESULT_PC_SOURCE;
             when LW_MEM_ACCESS         =>
                 pc_write_cond <= DEASSERTED; 
+                bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= ASSERTED;
                 mem_read      <= ASSERTED;
@@ -177,6 +185,7 @@ begin
                 pc_source     <= ALU_RESULT_PC_SOURCE;
             when MEM_READ_COMPLETION  =>
                 pc_write_cond <= DEASSERTED; 
+                bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= DEASSERTED;
@@ -191,6 +200,7 @@ begin
                 pc_source     <= ALU_RESULT_PC_SOURCE;
             when SW_MEM_ACCESS         =>
                 pc_write_cond <= DEASSERTED; 
+                bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= ASSERTED;
                 mem_read      <= DEASSERTED;
@@ -205,6 +215,7 @@ begin
                 pc_source     <= ALU_RESULT_PC_SOURCE;
             when ADDI_COMPLETION      =>
                 pc_write_cond <= DEASSERTED; 
+                bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= DEASSERTED;
@@ -221,6 +232,7 @@ begin
             -- R-TYPE ARITH AND LOGIC STATES
             when EXECUTION            =>
                 pc_write_cond <= DEASSERTED; 
+                bne_cond      <= DEASSERTED;
                 pc_write      <= ASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= DEASSERTED;
@@ -235,6 +247,7 @@ begin
                 pc_source     <= ALU_RESULT_PC_SOURCE;
             when R_TYPE_COMPLETION    =>
                 pc_write_cond <= DEASSERTED; 
+                bne_cond      <= DEASSERTED;
                 pc_write      <= ASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= DEASSERTED;
@@ -249,8 +262,24 @@ begin
                 pc_source     <= CURRENT_PC_AS_PC_SOURCE;
 
             -- BRANCH STATES    
-            when BRANCH_COMPLETION    =>
+            when BEQ_COMPLETION    =>
                 pc_write_cond <= ASSERTED; 
+                bne_cond      <= DEASSERTED;
+                pc_write      <= DEASSERTED;
+                i_or_d        <= DEASSERTED;
+                mem_read      <= DEASSERTED;
+                mem_write     <= DEASSERTED;
+                mem_to_reg    <= ALU_OUT_MEM_TO_REG;
+                ir_write      <= DEASSERTED;
+                reg_write     <= DEASSERTED;
+                reg_dst       <= RT_REG_DST;
+                alu_op        <= BEQ_OR_BNE_SUB;
+                alu_src_a     <= ASSERTED;
+                alu_src_b     <= B_ALU_SRC_B;
+                pc_source     <= ALU_OUT_PC_SOURCE;
+            when BNE_COMPLETION    =>
+                pc_write_cond <= ASSERTED; 
+                bne_cond      <= ASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= DEASSERTED;
@@ -267,6 +296,7 @@ begin
             -- JUMP STATES
             when JUMP_COMPLETION      =>
                 pc_write_cond <= DEASSERTED; 
+                bne_cond      <= DEASSERTED;
                 pc_write      <= ASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= DEASSERTED;
@@ -281,6 +311,7 @@ begin
                 pc_source     <= JUMP_PC_SOURCE;
             when JAL_COMPLETION       =>
                 pc_write_cond <= DEASSERTED; 
+                bne_cond      <= DEASSERTED;
                 pc_write      <= ASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= DEASSERTED;
@@ -297,6 +328,7 @@ begin
             -- OTHERS
             when others      =>
                 pc_write_cond <= 'X'; 
+                bne_cond      <= 'X';
                 pc_write      <= 'X';
                 i_or_d        <= 'X';
                 mem_read      <= 'X';
