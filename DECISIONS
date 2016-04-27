@@ -29,7 +29,12 @@ Instruction jal -> PCWriteCond = '0'
                   ALUSrcB = X, 
                   PCSource = "10"
                   
-Instruction bnq -> Think!!!
+Instruction bne -> create a new control signal (bne_cond) in control unit. this new signal is
+                   XORed with the ZERO alu output.
+Instruction jr -> create a new output signal (jr_signal) in alu_control unit. We also added
+                  a new mux that after the mux controlled by pc_source control signal.
+                  Moreover, we wired the pc register the fourth in port of the mux controlled by pc_source control signal.
+                  the new mux is controlled by jr signal.
 
 Instruction Addi -> PCWriteCond = '0' 
                   PCWrite = '0',
