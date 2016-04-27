@@ -46,7 +46,6 @@ constant BRANCH_COMPLETION       : state := 8;
 -- JUMP STATES
 constant JUMP_COMPLETION         : state := 9;
 constant JAL_COMPLETION          : state := 10;
-constant JR_COMPLETION           : state := 11;
 
 
 -- CURRENT_STATE
@@ -222,7 +221,7 @@ begin
             -- R-TYPE ARITH AND LOGIC STATES
             when EXECUTION            =>
                 pc_write_cond <= DEASSERTED; 
-                pc_write      <= DEASSERTED;
+                pc_write      <= ASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
@@ -236,7 +235,7 @@ begin
                 pc_source     <= ALU_RESULT_PC_SOURCE;
             when R_TYPE_COMPLETION    =>
                 pc_write_cond <= DEASSERTED; 
-                pc_write      <= DEASSERTED;
+                pc_write      <= ASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
@@ -247,7 +246,7 @@ begin
                 alu_op        <= LW_OR_SW_ADD;
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
-                pc_source     <= ALU_RESULT_PC_SOURCE;
+                pc_source     <= CURRENT_PC_AS_PC_SOURCE;
 
             -- BRANCH STATES    
             when BRANCH_COMPLETION    =>
@@ -294,11 +293,6 @@ begin
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
                 pc_source     <= JUMP_PC_SOURCE;
-            when JR_COMPLETION        =>
-            -- think about it better
-            -- the issue is that we need the funct
-            -- part of intruction to know how to
-            -- properly signalize this instruction
 
             -- OTHERS
             when others      =>

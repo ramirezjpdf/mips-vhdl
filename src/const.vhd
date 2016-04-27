@@ -31,6 +31,7 @@ package const is
     constant SUB_FUNCT : std_logic_vector (5 downto 0) := "100010";
     constant SLL_FUNCT : std_logic_vector (5 downto 0) := "000000";
     constant SRL_FUNCT : std_logic_vector (5 downto 0) := "000010";
+    constant JR_FUNCT  : std_logic_vector (5 downto 0) := "001000";
 
     -- REGISTER FILE
     constant REG_ZERO_ADDRS : std_logic_vector (4 downto 0) := "00000";
@@ -64,20 +65,21 @@ package const is
     constant ADDI   : std_logic_vector (5 downto 0) := "001000";
     
     -- CONTROL LINES
-    constant DEASSERTED            : std_logic := '0';
-    constant ASSERTED              : std_logic := '1';
-    constant ALU_OUT_MEM_TO_REG    : std_logic_vector (1 downto 0) := "00";
-    constant MDR_MEM_TO_REG        : std_logic_vector (1 downto 0) := "01";
-    constant PC_MEM_TO_REG         : std_logic_vector (1 downto 0) := "10";
-    constant RT_REG_DST            : std_logic_vector (1 downto 0) := "00";
-    constant RD_REG_DST            : std_logic_vector (1 downto 0) := "01";
-    constant RA_REG_DST            : std_logic_vector (1 downto 0) := "10";
-    constant B_ALU_SRC_B           : std_logic_vector (1 downto 0) := "00";
-    constant FOUR_ALU_SRC_B        : std_logic_vector (1 downto 0) := "01";
-    constant IMMED_ALU_SRC_B       : std_logic_vector (1 downto 0) := "10";
-    constant BRANCH_ADDR_ALU_SRC_B : std_logic_vector (1 downto 0) := "11";
-    constant ALU_RESULT_PC_SOURCE  : std_logic_vector (1 downto 0) := "00";
-    constant ALU_OUT_PC_SOURCE     : std_logic_vector (1 downto 0) := "01";
-    constant JUMP_PC_SOURCE        : std_logic_vector (1 downto 0) := "10";
+    constant DEASSERTED              : std_logic := '0';
+    constant ASSERTED                : std_logic := '1';
+    constant ALU_OUT_MEM_TO_REG      : std_logic_vector (1 downto 0) := "00";
+    constant MDR_MEM_TO_REG          : std_logic_vector (1 downto 0) := "01";
+    constant PC_MEM_TO_REG           : std_logic_vector (1 downto 0) := "10";
+    constant RT_REG_DST              : std_logic_vector (1 downto 0) := "00";
+    constant RD_REG_DST              : std_logic_vector (1 downto 0) := "01";
+    constant RA_REG_DST              : std_logic_vector (1 downto 0) := "10";
+    constant B_ALU_SRC_B             : std_logic_vector (1 downto 0) := "00";
+    constant FOUR_ALU_SRC_B          : std_logic_vector (1 downto 0) := "01";
+    constant IMMED_ALU_SRC_B         : std_logic_vector (1 downto 0) := "10";
+    constant BRANCH_ADDR_ALU_SRC_B   : std_logic_vector (1 downto 0) := "11";
+    constant ALU_RESULT_PC_SOURCE    : std_logic_vector (1 downto 0) := "00";
+    constant ALU_OUT_PC_SOURCE       : std_logic_vector (1 downto 0) := "01";
+    constant JUMP_PC_SOURCE          : std_logic_vector (1 downto 0) := "10";
+    constant CURRENT_PC_AS_PC_SOURCE : std_logic_vector (1 downto 0) := "11" ;
 end const;
 
