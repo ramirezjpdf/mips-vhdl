@@ -48,8 +48,8 @@ begin
 		end case;
 
 		case res_aux is
-			when x"00000000" => zero <= '0';
-			when others => zero <= '1';
+			when x"00000000" => zero <= '1';
+			when others => zero <= '0';
 		end case;
 
 		result <= res_aux;
