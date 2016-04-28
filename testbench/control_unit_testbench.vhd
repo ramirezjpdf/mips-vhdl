@@ -155,20 +155,20 @@ begin
         pc_source     : std_logic_vector (1 downto 0)
     )  is
     begin
-        assert pc_write_cond = DEASSERTED report "pc_write_cond  address calc state error";
-        assert bne_cond      = DEASSERTED report "bne_cond       address calc state error";
-        assert pc_write      = DEASSERTED report "pc_write       address calc state error";
-        assert i_or_d        = DEASSERTED report "i_or_d         address calc state error";
-        assert mem_read      = DEASSERTED report "mem_read       address calc state error";
-        assert mem_write     = DEASSERTED report "mem_write      address calc state error";
-        assert mem_to_reg    = ALU_OUT_MEM_TO_REG report "mem_to_reg     address calc state error";
-        assert ir_write      = DEASSERTED report "ir_write       address calc state error";
-        assert reg_write     = DEASSERTED report "reg_write      address calc state error";
-        assert reg_dst       = RT_REG_DST report "reg_dst        address calc state error";
-        assert alu_op        = LW_OR_SW_ADD report "alu_op         address calc state error";
-        assert alu_src_a     = ASSERTED report "alu_src_a      address calc state error";
-        assert alu_src_b     = IMMED_ALU_SRC_B report "alu_src_b      address calc state error";
-        assert pc_source     = ALU_RESULT_PC_SOURCE report "pc_source      address calc state error";
+        assert pc_write_cond = DEASSERTED report "pc_write_cond  lwsw_addr_calc_addi_exec state error";
+        assert bne_cond      = DEASSERTED report "bne_cond       lwsw_addr_calc_addi_exec state error";
+        assert pc_write      = DEASSERTED report "pc_write       lwsw_addr_calc_addi_exec state error";
+        assert i_or_d        = DEASSERTED report "i_or_d         lwsw_addr_calc_addi_exec state error";
+        assert mem_read      = DEASSERTED report "mem_read       lwsw_addr_calc_addi_exec state error";
+        assert mem_write     = DEASSERTED report "mem_write      lwsw_addr_calc_addi_exec state error";
+        assert mem_to_reg    = ALU_OUT_MEM_TO_REG report "mem_to_reg     lwsw_addr_calc_addi_exec state error";
+        assert ir_write      = DEASSERTED report "ir_write       lwsw_addr_calc_addi_exec state error";
+        assert reg_write     = DEASSERTED report "reg_write      lwsw_addr_calc_addi_exec state error";
+        assert reg_dst       = RT_REG_DST report "reg_dst        lwsw_addr_calc_addi_exec state error";
+        assert alu_op        = LW_OR_SW_ADD report "alu_op         lwsw_addr_calc_addi_exec state error";
+        assert alu_src_a     = ASSERTED report "alu_src_a      lwsw_addr_calc_addi_exec state error";
+        assert alu_src_b     = IMMED_ALU_SRC_B report "alu_src_b      lwsw_addr_calc_addi_exec state error";
+        assert pc_source     = ALU_RESULT_PC_SOURCE report "pc_source      lwsw_addr_calc_addi_exec state error";
     end procedure assert_lwsw_addr_calc_addi_exec;
     
     procedure assert_lw_mem_access(
@@ -188,20 +188,20 @@ begin
         pc_source     : std_logic_vector (1 downto 0)
     )  is
     begin
-        assert pc_write_cond = DEASSERTED report "pc_write_cond mem access state error";
-        assert bne_cond      = DEASSERTED report "bne_cond      mem access state error";
-        assert pc_write      = DEASSERTED report "pc_write      mem access state error";
-        assert i_or_d        = ASSERTED report "i_or_d        mem access state error";
-        assert mem_read      = ASSERTED report "mem_read      mem access state error";
-        assert mem_write     = DEASSERTED report "mem_write     mem access state error";
-        assert mem_to_reg    = ALU_OUT_MEM_TO_REG report "mem_to_reg    mem access state error";
-        assert ir_write      = DEASSERTED report "ir_write      mem access state error";
-        assert reg_write     = DEASSERTED report "reg_write     mem access state error";
-        assert reg_dst       = RT_REG_DST report "reg_dst       mem access state error";
-        assert alu_op        = LW_OR_SW_ADD report "alu_op        mem access state error";
-        assert alu_src_a     = DEASSERTED report "alu_src_a     mem access state error";
-        assert alu_src_b     = B_ALU_SRC_B report "alu_src_b     mem access state error";
-        assert pc_source     = ALU_RESULT_PC_SOURCE report "pc_source     mem access state error";
+        assert pc_write_cond = DEASSERTED report "pc_write_cond lw_mem_access state error";
+        assert bne_cond      = DEASSERTED report "bne_cond      lw_mem_access state error";
+        assert pc_write      = DEASSERTED report "pc_write      lw_mem_access state error";
+        assert i_or_d        = ASSERTED report "i_or_d        lw_mem_access state error";
+        assert mem_read      = ASSERTED report "mem_read      lw_mem_access state error";
+        assert mem_write     = DEASSERTED report "mem_write     lw_mem_access state error";
+        assert mem_to_reg    = ALU_OUT_MEM_TO_REG report "mem_to_reg    lw_mem_access state error";
+        assert ir_write      = DEASSERTED report "ir_write      lw_mem_access state error";
+        assert reg_write     = DEASSERTED report "reg_write     lw_mem_access state error";
+        assert reg_dst       = RT_REG_DST report "reg_dst       lw_mem_access state error";
+        assert alu_op        = LW_OR_SW_ADD report "alu_op        lw_mem_access state error";
+        assert alu_src_a     = DEASSERTED report "alu_src_a     lw_mem_access state error";
+        assert alu_src_b     = B_ALU_SRC_B report "alu_src_b     lw_mem_access state error";
+        assert pc_source     = ALU_RESULT_PC_SOURCE report "pc_source     lw_mem_access state error";
     end procedure assert_lw_mem_access;
     
     procedure assert_lw_reg_write(
@@ -221,20 +221,20 @@ begin
         pc_source     : std_logic_vector (1 downto 0)
     )  is
     begin
-        assert pc_write_cond = DEASSERTED report "pc_write_cond mem read state error";
-        assert bne_cond      = DEASSERTED report "bne_cond      mem read state error";
-        assert pc_write      = DEASSERTED report "pc_write      mem read state error";
-        assert i_or_d        = DEASSERTED report "i_or_d        mem read state error";
-        assert mem_read      = DEASSERTED report "mem_read      mem read state error";
-        assert mem_write     = DEASSERTED report "mem_write     mem read state error";
-        assert mem_to_reg    = MDR_MEM_TO_REG report "mem_to_reg    mem read state error";
-        assert ir_write      = DEASSERTED report "ir_write      mem read state error";
-        assert reg_write     = ASSERTED report "reg_write     mem read state error";
-        assert reg_dst       = RT_REG_DST report "reg_dst       mem read state error";
-        assert alu_op        = LW_OR_SW_ADD report "alu_op        mem read state error";
-        assert alu_src_a     = DEASSERTED report "alu_src_a     mem read state error";
-        assert alu_src_b     = B_ALU_SRC_B report "alu_src_b     mem read state error";
-        assert pc_source     = ALU_RESULT_PC_SOURCE report "pc_source     mem read state error";
+        assert pc_write_cond = DEASSERTED report "pc_write_cond lw_reg_write state error";
+        assert bne_cond      = DEASSERTED report "bne_cond      lw_reg_write state error";
+        assert pc_write      = DEASSERTED report "pc_write      lw_reg_write state error";
+        assert i_or_d        = DEASSERTED report "i_or_d        lw_reg_write state error";
+        assert mem_read      = DEASSERTED report "mem_read      lw_reg_write state error";
+        assert mem_write     = DEASSERTED report "mem_write     lw_reg_write state error";
+        assert mem_to_reg    = MDR_MEM_TO_REG report "mem_to_reg    lw_reg_write state error";
+        assert ir_write      = DEASSERTED report "ir_write      lw_reg_write state error";
+        assert reg_write     = ASSERTED report "reg_write     lw_reg_write state error";
+        assert reg_dst       = RT_REG_DST report "reg_dst       lw_reg_write state error";
+        assert alu_op        = LW_OR_SW_ADD report "alu_op        lw_reg_write state error";
+        assert alu_src_a     = DEASSERTED report "alu_src_a     lw_reg_write state error";
+        assert alu_src_b     = B_ALU_SRC_B report "alu_src_b     lw_reg_write state error";
+        assert pc_source     = ALU_RESULT_PC_SOURCE report "pc_source     lw_reg_write state error";
     end procedure assert_lw_reg_write;
     
     
@@ -283,7 +283,7 @@ begin
         wait for 1 ps;
         t_clk <= '0';
 
-        -- ADDRESS CALCULATION
+        -- LW SW ADDRESS CALC AND ADDI EXEC
         wait for 1 ps;
         t_clk <= '1';
         assert_lwsw_addr_calc_addi_exec(pc_write_cond => t_pc_write_cond,
@@ -303,7 +303,7 @@ begin
         wait for 1 ps;
         t_clk <= '0';
 
-        -- MEM ACCESS
+        -- LW MEM ACCESS
         wait for 1 ps;
         t_clk <= '1';
         assert_lw_mem_access(pc_write_cond => t_pc_write_cond,
@@ -323,7 +323,7 @@ begin
         wait for 1 ps;
         t_clk <= '0';
 
-        -- REGISTER WRITE
+        -- LW REGISTER WRITE
         wait for 1 ps;
         t_clk <= '1';
         assert_lw_reg_write(pc_write_cond => t_pc_write_cond,
