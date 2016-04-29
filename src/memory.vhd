@@ -36,23 +36,23 @@ use work.const.all;
 
 entity memory is
     Port ( CLK : in STD_LOGIC;
-	       MemRead : in STD_LOGIC;
-           MemWrite : in STD_LOGIC;
+	       MemRead : in STD_LOGIC;      --Control signal from control unit
+           MemWrite : in STD_LOGIC;     --Control signal from control unit
            Address : in STD_LOGIC_VECTOR (31 downto 0);
            WriteData : in STD_LOGIC_VECTOR (31 downto 0);
-           ReadData : out STD_LOGIC_VECTOR (31 downto 0));
+           MemData : out STD_LOGIC_VECTOR (31 downto 0));
 end memory;
 
 architecture Behavioral of memory is
 
-    signal memory : rom_mem := MEM_INIT_STATE; --initialized memory
+    signal memory : rom_mem := MEM_INIT_STATE; --initialized memory with instructions
 
 begin
     process (CLK) is
     begin
         if rising_edge(CLK) then
 			if MemRead = '1' then
-		    	ReadData <= memory(to_integer(unsigned(Address)));
+		    	MemData <= memory(to_integer(unsigned(Address)));
 		    end if;
 		   	
 		    if MemWrite = '1' then
@@ -63,5 +63,6 @@ begin
     end process;
 
 end Behavioral;
+
 
 
