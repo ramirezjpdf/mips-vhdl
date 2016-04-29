@@ -9,7 +9,7 @@ entity alu_control is
 		 alu_op : in std_logic_vector (1 downto 0);
 		 funct  : in std_logic_vector (5 downto 0);
 		 alu_control_out_signal : out std_logic_vector(3 downto 0);
-                 jr_signal : out std_logic)
+         jr_signal : out std_logic
 	);
 end alu_control;
 
