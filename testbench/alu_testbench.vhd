@@ -35,9 +35,9 @@ begin
     
     process
     begin
-        t_a <= std_logic_vector(to_signed(2), 32);
-        t_b <= std_logic_vector(to_signed(2), 32);
-        t_shamt <= std_logic_vector(to_signed(1), 32);
+        t_a <= std_logic_vector(to_signed(2, t_a'length));
+        t_b <= std_logic_vector(to_signed(2, t_b'length));
+        t_shamt <= std_logic_vector(to_signed(1, t_shamt'length));
 
         -- ADD
         t_alu_control_in <= ADD_CONTROL;
@@ -112,7 +112,7 @@ begin
             report "slt a == b operation result output failed.";
 
         -- SLT a > b
-        t_a <= std_logic_vector(to_signed(3));
+        t_a <= std_logic_vector(to_signed(3, t_a'length));
         t_alu_control_in <= SLT_CONTROL;
         wait for 1 ps;
 
@@ -122,7 +122,7 @@ begin
             report "slt a > b operation result output failed.";
 
         -- SLT a < b
-        t_a <= std_logic_vector(to_signed(1));
+        t_a <= std_logic_vector(to_signed(1, t_a'length));
         t_alu_control_in <= SLT_CONTROL;
         wait for 1 ps;
 
