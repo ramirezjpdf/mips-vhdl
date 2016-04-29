@@ -36,7 +36,7 @@ use work.const.all;
 
 entity memory is
     Port ( CLK : in STD_LOGIC;
-	   MemRead : in STD_LOGIC;
+	       MemRead : in STD_LOGIC;
            MemWrite : in STD_LOGIC;
            Address : in STD_LOGIC_VECTOR (31 downto 0);
            WriteData : in STD_LOGIC_VECTOR (31 downto 0);
@@ -63,4 +63,5 @@ begin
     end process;
 
 end Behavioral;
+
 
