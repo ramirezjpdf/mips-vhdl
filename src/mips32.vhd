@@ -89,7 +89,7 @@ architecture behav of mips32 is
     
     --ALU signals
     signal A, B, ALUresult : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
-    signal SHAMT : STD_LOGIC_VECTOR (5 downto 0);
+    signal SHAMT : STD_LOGIC_VECTOR (4 downto 0);
     signal Zero : STD_LOGIC;
     
     --ALU control signals
@@ -117,11 +117,10 @@ begin
             
             --MemRead <= '1'; 
             if  (PCWrite or (PCWriteCond and (zero xor BNECond))) then
-            --if  or(unsigned(PCWrite), and(unsigned(PCWriteCond), xor(unsigned(zero), unsigned(BNECond)))) then
-                case JR_SIGNAL is
+                case JR_SIGNAL is  		--Multplexer added to control the data that should be write on PC whith instruction JR
                     when '1' => pc <= ALUOut;
                     when others =>
-                        case PCSource is
+                        case PCSource is	--Multiplexer controlled by PCSource signal  from control unit
                             when "01"   => pc <= ALUresult;
                             when "10"   => pc <= std_logic_vector(signed(INSTR_REGISTER(25 downto 0)) sll 2) & pc(31 downto 28);
                             when others => pc <= ALUOut;
@@ -136,7 +135,7 @@ begin
             end if;
             
             MEM_DATA_REGISTER <= MemData;   --Always write data into Memory Data Register
-            MemWriteData <= regB;              --regB is wired direct to the data to write port of the memory 
+            MemWriteData <= regB;           --regB is wired direct to the data_to_write port of the memory 
             
             OpCode <= INSTR_REGISTER(31 downto 26);
             FUNCT <= INSTR_REGISTER(5 downto 0);
@@ -152,7 +151,7 @@ begin
             end case;
             
             case MemtoReg is    --Multiplexer controlled by MemtoReg signal from control unit 
-                when "1"    => RegWriteData <= MEM_DATA_REGISTER;
+                when "01"    => RegWriteData <= MEM_DATA_REGISTER;
                 when others => RegWriteData <= ALUOut;
             end case;
             
@@ -163,20 +162,20 @@ begin
             SignExt16_32 <= std_logic_vector(resize(signed(INSTR_REGISTER(15 downto 0)), SignExt16_32'length));
             
             --ALU signals                                                    
-            case ALUSrcA is      --Multiplexer controlled by ALUSrcA signal  from control unit                                                         
+            case ALUSrcA is      --Multiplexer controlled by ALUSrcA signal  from control unit
                 when '1'    => A <= regA;                                    
                 when others => A <= pc;                                                    
             end case;                                                        
                                                                              
-            case ALUSrcB is      --Multiplexer controlled by ALUSrcB signal  from control unit                                                           
+            case ALUSrcB is      --Multiplexer controlled by ALUSrcB signal  from control unit                            
                 when "01"   => B <= x"00000004";  
                 when "10"   => B <= SignExt16_32;
-                when "11"   => B <= std_logic_vector(signed(SignExt16_32) sll  2); --Instruction(15-0) extended to 32 and shifted to left by 2                         
+                when "11"   => B <= std_logic_vector(signed(SignExt16_32) sll  2); --Instruction(15-0) extended to 32 and shifted to left by 2
                 when others => B <= regB;                                                                 
             end case;  
             
             ALUOut <= ALUresult;
-            MipsReadData  <= ALUOut; --MipsReadData is used only for debug                                                                            
+            MipsReadData  <= ALUOut; --MipsReadData is used only for debug             
                 
          end if;
 	end process;
