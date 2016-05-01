@@ -12,17 +12,17 @@ end entity;
 
 architecture struct of mips32_struct is
 
-	component memory is 
-        Port ( CLK : in STD_LOGIC;                                	
+    component memory is 
+        Port ( CLK : in STD_LOGIC;                                  
                MemRead : in STD_LOGIC;                                
                MemWrite : in STD_LOGIC;                               
                Address : in STD_LOGIC_VECTOR (31 downto 0);           
                WriteData : in STD_LOGIC_VECTOR (31 downto 0);         
                MemData : out STD_LOGIC_VECTOR (31 downto 0));         
-	end component;
-	
-	component Register_v2 is
-	   Port (  CLK : in STD_LOGIC;
+    end component;
+    
+    component Register_v2 is
+       Port (  CLK : in STD_LOGIC;
                RegWrite : in STD_LOGIC;
                ReadAddrs1 : in STD_LOGIC_VECTOR (4 downto 0);
                ReadAddrs2 : in STD_LOGIC_VECTOR (4 downto 0);
@@ -30,9 +30,9 @@ architecture struct of mips32_struct is
                WriteData : in STD_LOGIC_VECTOR (31 downto 0);
                ReadData1 : out STD_LOGIC_VECTOR (31 downto 0);
                ReadData2 : out STD_LOGIC_VECTOR (31 downto 0));
-	end component;
-	
-	component alu is
+    end component;
+    
+    component alu is
         port(
             a, b           : in std_logic_vector(31 downto 0);
             shamt          : in std_logic_vector(4 downto 0);
@@ -42,7 +42,7 @@ architecture struct of mips32_struct is
         );
     end component;
     
-	component alu_control is
+    component alu_control is
         port(
                  alu_op : in std_logic_vector (1 downto 0);
                  funct  : in std_logic_vector (5 downto 0);
@@ -72,27 +72,27 @@ architecture struct of mips32_struct is
             pc_source     : out std_logic_vector (1 downto 0)
         );
     end component;
-	
-	component reg_aux is
-		port(CLK : in std_logic;
-			in_data : in std_logic_vector(31 downto 0);
-			out_data: out std_logic_vector (31 downto 0));
-	end component;
-	
-	component reg_special is
-		port(CLK : in std_logic;
-			write_signal : in std_logic;
-			in_data : in std_logic_vector(31 downto 0);
-			out_data: out std_logic_vector (31 downto 0));
-	end component;
-	signal pc : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
-	
-	--Control signals
-	signal OpCode : STD_LOGIC_VECTOR(5 downto 0);
-	signal ALUop,  ALUSrcB, PCSource, MemtoReg, RegDst : STD_LOGIC_VECTOR(1 downto 0);
-	signal BNECond, PCWriteCond, PCWrite, IorD, RegWrite, MemWrite, MemRead, IRWrite, ALUSrcA : STD_LOGIC;
-	
-	--Memory signals
+    
+    component reg_aux is
+        port(CLK : in std_logic;
+            in_data : in std_logic_vector(31 downto 0);
+            out_data: out std_logic_vector (31 downto 0));
+    end component;
+    
+    component reg_special is
+        port(CLK : in std_logic;
+            write_signal : in std_logic;
+            in_data : in std_logic_vector(31 downto 0);
+            out_data: out std_logic_vector (31 downto 0));
+    end component;
+    signal pc : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
+    
+    --Control signals
+    signal OpCode : STD_LOGIC_VECTOR(5 downto 0);
+    signal ALUop,  ALUSrcB, PCSource, MemtoReg, RegDst : STD_LOGIC_VECTOR(1 downto 0);
+    signal BNECond, PCWriteCond, PCWrite, IorD, RegWrite, MemWrite, MemRead, IRWrite, ALUSrcA : STD_LOGIC;
+    
+    --Memory signals
     signal Mem_Address, MemWriteData, MemData : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
     
     --Register file signals
@@ -110,16 +110,16 @@ architecture struct of mips32_struct is
     signal JR_SIGNAL : STD_LOGIC;
     
     --Auxiliar Registers
-    signal regA, regB, ALUOut : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
+    signal regA, regB, ALU_OUT_out_data : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
     signal INSTR_REGISTER : STD_LOGIC_VECTOR (31 downto 0);
-    signal MEM_DATA_REGISTER : STD_LOGIC_VECTOR (31 downto 0);
+    signal mdr_out : STD_LOGIC_VECTOR (31 downto 0);
     signal SignExt16_32 : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
     
 begin
 
-	process(CLK) is
-	begin
-		if rising_edge(CLK) then
+    process(CLK) is
+    begin
+        if rising_edge(CLK) then
             
             case IorD is    --Multiplexer controlled by IorD signal from control unit
              
@@ -129,10 +129,10 @@ begin
             
             --MemRead <= '1'; 
             if  (PCWrite or (PCWriteCond and (zero xor BNECond))) then
-                case JR_SIGNAL is  		--Multplexer added to control the data that should be write on PC whith instruction JR
+                case JR_SIGNAL is       --Multplexer added to control the data that should be write on PC whith instruction JR
                     when '1' => pc <= ALUOut;
                     when others =>
-                        case PCSource is	--Multiplexer controlled by PCSource signal  from control unit
+                        case PCSource is    --Multiplexer controlled by PCSource signal  from control unit
                             when "01"   => pc <= ALUresult;
                             when "10"   => pc <= std_logic_vector(signed(INSTR_REGISTER(25 downto 0)) sll 2) & pc(31 downto 28);
                             when others => pc <= ALUOut;
@@ -190,38 +190,38 @@ begin
             MipsReadData  <= ALUOut; --MipsReadData is used only for debug             
                 
          end if;
-	end process;
-	
-	INSTR_DATA_MEMORY_MPIS32 : memory port map (CLK,
+    end process;
+    
+    INSTR_DATA_MEMORY_MPIS32 : memory port map (CLK,
                                                 MemRead,      
                                                 MemWrite,     
                                                 Mem_Address,  
                                                 MemWriteData, 
                                                 MemData);     
-	
-	REGISTER_FILE_MPIS32     : Register_v2 port map (CLK,
+    
+    REGISTER_FILE_MPIS32     : Register_v2 port map (CLK,
                                                      RegWrite,     
-                                                     ReadAddrs1,   
-                                                     ReadAddrs2,   
+                                                     ir_out(25 downto 21),   
+                                                     ir_out(20 downto 16),   
                                                      WriteAddrs,   
                                                      RegWriteData, 
                                                      ReadData1,    
                                                      ReadData2);   
-	
-	ALU_MPIS32               : alu port map (A, 
+    
+    ALU_MPIS32               : alu port map (A, 
                                              B,               
                                              SHAMT,           
                                              ALU_CONTROL_SIGNAL,  
                                              Zero,            
                                              ALUresult);         
-	
-	ALU_CONTROL1_MPIS32      : alu_control port map (ALUOp,
+    
+    ALU_CONTROL1_MPIS32      : alu_control port map (ALUOp,
                                                      FUNCT,               
                                                      ALU_CONTROL_SIGNAL, 
                                                      JR_SIGNAL);          
-	
-	CONTROL_UNIT1_MPIS32     : control_unit port map (CLK, 
-                                                      OpCode,        
+    
+    CONTROL_UNIT1_MPIS32     : control_unit port map (CLK, 
+                                                      ir_out(31 downto 26),        
                                                       PCWriteCond, 
                                                       BNECond,      
                                                       PCWrite,      
@@ -237,17 +237,44 @@ begin
                                                       ALUSrcB,     
                                                       PCSource);
 
-	PC                       : reg_special port map (CLK,
-	                                                 pc_write_signal,
-													 pc_in,
-													 pc_out);
-													 
-	IR                       : reg_special port map (CLK,
-													 IRWrite,
-													 ir_in,
-													 ir_out);
-													 
-	A                        : reg_aux port map (CLK,
-												 
+pc_write_signal <= PCWrite or (PCWriteCond and(BNECond xor Zero));
+    PC                       : reg_special port map (CLK,
+                                                     pc_write_signal,
+                                                     pc_in,
+                                                     pc_out);
+    i_or_d_mux               : mux_one generic map(MIPS32_DATA_LENGTH)
+                                       port map (IorD,
+                                                 pc_out,
+                                                 ALU_OUT_out_data,
+                                                 Mem_Address);
+ 
+    IR                       : reg_special port map (CLK,
+                                                     IRWrite,
+                                                     MemData,
+                                                     ir_out);
+
+    MEMORY_DATA_REGISTER     : reg_aux port map (CLK,
+                                                 MemData,
+                                                 mdr_out);
+
+    write_reg_addr_mux       : mux_two generic map(REG_FILE_ADDR_LENGTH) 
+                                       port map(RegDst,
+                                                ir_out(20 downto 16),
+                                                ir_out(15 downto 11),
+                                                REG_RA_ADDRES,
+                                                "XXXXX",
+												WriteAddrs);
+												
+	write_reg_data_mux       : mux_two generic map(MIPS32_DATA_LENGTH) 
+                                       port map(MemtoReg,
+                                                ALU_OUT_out_data,
+												mdr_out,
+												pc_out,
+												"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+												RegWriteData);
+
+    ALU_OUT                  : reg_aux port map (CLK,
+                                                 ALUresult,
+                                                 ALU_OUT_out_data);
     
 end architecture;
