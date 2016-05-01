@@ -2,9 +2,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-use work.const.all;
-
-
 entity reg_special is
     port(clk : in std_logic;
          write_signal : in std_logic;

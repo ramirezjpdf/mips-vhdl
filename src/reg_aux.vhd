@@ -2,9 +2,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-use work.const.all;
-
-
 entity reg_aux is
     port(clk : in std_logic;
          in_data : in std_logic_vector(31 downto 0);
