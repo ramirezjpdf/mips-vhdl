@@ -85,10 +85,26 @@ architecture struct of mips32_struct is
             in_data : in std_logic_vector(31 downto 0);
             out_data: out std_logic_vector (31 downto 0));
     end component;
-    signal pc : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
+    
+    component mux_one is
+    generic (data_length : integer);
+    port(sel : in std_logic;
+         in0_data : in std_logic_vector(data_length - 1 downto 0);
+         in1_data : in std_logic_vector(data_length - 1 downto 0);
+         out_data: out std_logic_vector(data_length - 1 downto 0));
+    end component;
+    
+    component mux_two is
+    generic(data_length : integer);
+    port(sel : in std_logic_vector(1 downto 0);
+         in0_data : in std_logic_vector(data_length - 1 downto 0);
+         in1_data : in std_logic_vector(data_length - 1 downto 0);
+         in2_data : in std_logic_vector(data_length - 1 downto 0);
+         in3_data : in std_logic_vector(data_length - 1 downto 0);
+         out_data: out std_logic_vector(data_length - 1 downto 0));
+    end component;
     
     --Control signals
-    signal OpCode : STD_LOGIC_VECTOR(5 downto 0);
     signal ALUop,  ALUSrcB, PCSource, MemtoReg, RegDst : STD_LOGIC_VECTOR(1 downto 0);
     signal BNECond, PCWriteCond, PCWrite, IorD, RegWrite, MemWrite, MemRead, IRWrite, ALUSrcA : STD_LOGIC;
     
@@ -96,102 +112,31 @@ architecture struct of mips32_struct is
     signal Mem_Address, MemWriteData, MemData : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
     
     --Register file signals
-    signal ReadAddrs1, ReadAddrs2, WriteAddrs : STD_LOGIC_VECTOR (4 downto 0) := "00000";
+    signal WriteAddrs : STD_LOGIC_VECTOR (4 downto 0) := "00000";
     signal RegWriteData, ReadData1, ReadData2 : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
     
     --ALU signals
     signal A, B, ALUresult : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
-    signal SHAMT : STD_LOGIC_VECTOR (4 downto 0);
     signal Zero : STD_LOGIC;
     
     --ALU control signals
-    signal FUNCT : STD_LOGIC_VECTOR (5 downto 0);
     signal ALU_CONTROL_SIGNAL : STD_LOGIC_VECTOR (3 downto 0);
     signal JR_SIGNAL : STD_LOGIC;
     
     --Auxiliar Registers
-    signal regA, regB, ALU_OUT_out_data : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
-    signal INSTR_REGISTER : STD_LOGIC_VECTOR (31 downto 0);
+    signal pc_out : STD_LOGIC_VECTOR (31 downto 0);
+    signal pc_in : STD_LOGIC_VECTOR (31 downto 0);
+    signal ir_out : STD_LOGIC_VECTOR (31 downto 0);
+    signal ALU_OUT_out_data : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
     signal mdr_out : STD_LOGIC_VECTOR (31 downto 0);
     signal SignExt16_32 : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
+    signal SignExt16_32_shift_left_2 : STD_LOGIC_VECTOR (31 downto 0);
+    signal jump_address : STD_LOGIC_VECTOR (31 downto 0);
+    signal pc_source_mux1_out: STD_LOGIC_VECTOR (31 downto 0);
+
+    
     
 begin
-
-    process(CLK) is
-    begin
-        if rising_edge(CLK) then
-            
-            case IorD is    --Multiplexer controlled by IorD signal from control unit
-             
-                when '1'    => Mem_Address <= ALUOut; 
-                when others => Mem_Address <= pc;                            
-            end case;
-            
-            --MemRead <= '1'; 
-            if  (PCWrite or (PCWriteCond and (zero xor BNECond))) then
-                case JR_SIGNAL is       --Multplexer added to control the data that should be write on PC whith instruction JR
-                    when '1' => pc <= ALUOut;
-                    when others =>
-                        case PCSource is    --Multiplexer controlled by PCSource signal  from control unit
-                            when "01"   => pc <= ALUresult;
-                            when "10"   => pc <= std_logic_vector(signed(INSTR_REGISTER(25 downto 0)) sll 2) & pc(31 downto 28);
-                            when others => pc <= ALUOut;
-                        end case;
-                end case;
-            else
-                pc <= std_logic_vector(signed(pc) + x"00000001");  --PC + 1
-            end if;
-                                                      
-            if IRWrite = '1' then
-                INSTR_REGISTER <= MemData;  --Write instruction into Instruction Register
-            end if;
-            
-            MEM_DATA_REGISTER <= MemData;   --Always write data into Memory Data Register
-            MemWriteData <= regB;           --regB is wired direct to the data_to_write port of the memory 
-            
-            OpCode <= INSTR_REGISTER(31 downto 26);
-            FUNCT <= INSTR_REGISTER(5 downto 0);
-            SHAMT <= INSTR_REGISTER(10 downto 6);
-            
-            --Input signals and buses of Register File
-            ReadAddrs1 <= INSTR_REGISTER(25 downto 21);
-            ReadAddrs2 <= INSTR_REGISTER(20 downto 16);
-            
-            case RegDst is      --Multiplexer controlled by RegDst signal from control unit                  
-                when "01"    => WriteAddrs <= INSTR_REGISTER(15 downto 11);   
-                when others => WriteAddrs <= INSTR_REGISTER(20 downto 16);                                        
-            end case;
-            
-            case MemtoReg is    --Multiplexer controlled by MemtoReg signal from control unit 
-                when "01"    => RegWriteData <= MEM_DATA_REGISTER;
-                when others => RegWriteData <= ALUOut;
-            end case;
-            
-            regA <= ReadData1;
-            regB <= ReadData2;           
-                                          
-            --Sign extend of Instruction[15-0] to 32 bits        
-            SignExt16_32 <= std_logic_vector(resize(signed(INSTR_REGISTER(15 downto 0)), SignExt16_32'length));
-            
-            --ALU signals                                                    
-            case ALUSrcA is      --Multiplexer controlled by ALUSrcA signal  from control unit
-                when '1'    => A <= regA;                                    
-                when others => A <= pc;                                                    
-            end case;                                                        
-                                                                             
-            case ALUSrcB is      --Multiplexer controlled by ALUSrcB signal  from control unit                            
-                when "01"   => B <= x"00000004";  
-                when "10"   => B <= SignExt16_32;
-                when "11"   => B <= std_logic_vector(signed(SignExt16_32) sll  2); --Instruction(15-0) extended to 32 and shifted to left by 2
-                when others => B <= regB;                                                                 
-            end case;  
-            
-            ALUOut <= ALUresult;
-            MipsReadData  <= ALUOut; --MipsReadData is used only for debug             
-                
-         end if;
-    end process;
-    
     INSTR_DATA_MEMORY_MPIS32 : memory port map (CLK,
                                                 MemRead,      
                                                 MemWrite,     
@@ -210,13 +155,13 @@ begin
     
     ALU_MPIS32               : alu port map (A, 
                                              B,               
-                                             SHAMT,           
+                                             ir_out(10 downto 6),           
                                              ALU_CONTROL_SIGNAL,  
                                              Zero,            
                                              ALUresult);         
     
     ALU_CONTROL1_MPIS32      : alu_control port map (ALUOp,
-                                                     FUNCT,               
+                                                     ir_out(5 downto 0),               
                                                      ALU_CONTROL_SIGNAL, 
                                                      JR_SIGNAL);          
     
@@ -242,6 +187,7 @@ pc_write_signal <= PCWrite or (PCWriteCond and(BNECond xor Zero));
                                                      pc_write_signal,
                                                      pc_in,
                                                      pc_out);
+
     i_or_d_mux               : mux_one generic map(MIPS32_DATA_LENGTH)
                                        port map (IorD,
                                                  pc_out,
@@ -263,18 +209,61 @@ pc_write_signal <= PCWrite or (PCWriteCond and(BNECond xor Zero));
                                                 ir_out(15 downto 11),
                                                 REG_RA_ADDRES,
                                                 "XXXXX",
-												WriteAddrs);
-												
-	write_reg_data_mux       : mux_two generic map(MIPS32_DATA_LENGTH) 
+                                                WriteAddrs);
+                                                
+    write_reg_data_mux       : mux_two generic map(MIPS32_DATA_LENGTH) 
                                        port map(MemtoReg,
                                                 ALU_OUT_out_data,
-												mdr_out,
-												pc_out,
-												"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-												RegWriteData);
+                                                mdr_out,
+                                                pc_out,
+                                                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+                                                RegWriteData);
+                                                
+    A_REG                    : reg_aux port map(CLK,
+                                                ReadData1,
+                                                a_reg_out);
+                                                
+    alu_source_a_mux         : mux_one generic map(MIPS32_DATA_LENGTH)
+                                       port map(ALUSrcA,
+                                                pc_out,
+                                                a_reg_out,
+                                                A);
+                                                
+    B_REG                    : reg_aux port map(CLK,
+                                                ReadData2,
+                                                b_reg_out);
+                                                
+    SignExt16_32 <= std_logic_vector(resize(signed(ir_out(15 downto 0)),
+                                     SignExt16_32'length));
+    SignExt16_32_shift_left_2 <= std_logic_vector(
+                                     signed(SignExt16_32) sll  2);
+    alu_source_b_mux         : mux_two generic map(MIPS32_DATA_LENGTH)
+                                       port map(ALUSrcB,
+                                                b_reg_out,
+                                                x"00000001",
+                                                SignExt16_32,
+                                                SignExt16_32_shift_left_2,
+                                                B);
 
-    ALU_OUT                  : reg_aux port map (CLK,
+    ALU_OUT                  : reg_aux port map(CLK,
+                                                ALUresult,
+                                                ALU_OUT_out_data);
+                                                 
+    jump_address(31 downto 28) <= pc_out(31 downto 28);
+    jump_address(27 downto 2)  <= ir_out(25 downto 0);
+    jump_address(1 downto 0)   <= "00";
+    pc_source_mux1            : mux_two generic map(MIPS32_DATA_LENGTH)
+                                        port map(PCSource,
                                                  ALUresult,
-                                                 ALU_OUT_out_data);
+                                                 ALU_OUT_out_data,
+                                                 jump_address,
+                                                 pc_out,
+                                                 pc_source_mux1_out);
+                                                 
+    pc_source_mux2            : mux_one generic map(MIPS32_DATA_LENGTH)
+                                        port map(JR_SIGNAL,
+                                                 pc_source_mux_out,
+                                                 ALU_OUT_out_data,
+                                                 pc_in);
     
 end architecture;
