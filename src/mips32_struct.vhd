@@ -109,7 +109,7 @@ architecture struct of mips32_struct is
     signal BNECond, PCWriteCond, PCWrite, IorD, RegWrite, MemWrite, MemRead, IRWrite, ALUSrcA : STD_LOGIC;
     
     --Memory signals
-    signal Mem_Address, MemWriteData, MemData : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
+    signal Mem_Address, MemData : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
     
     --Register file signals
     signal WriteAddrs : STD_LOGIC_VECTOR (4 downto 0) := "00000";
@@ -126,7 +126,10 @@ architecture struct of mips32_struct is
     --Auxiliar Registers
     signal pc_out : STD_LOGIC_VECTOR (31 downto 0);
     signal pc_in : STD_LOGIC_VECTOR (31 downto 0);
+    signal pc_write_signal : STD_LOGIC;
     signal ir_out : STD_LOGIC_VECTOR (31 downto 0);
+    signal a_reg_out : std_logic_vector(31 downto 0); 
+    signal b_reg_out : std_logic_vector(31 downto 0); 
     signal ALU_OUT_out_data : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
     signal mdr_out : STD_LOGIC_VECTOR (31 downto 0);
     signal SignExt16_32 : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
@@ -141,7 +144,7 @@ begin
                                                 MemRead,      
                                                 MemWrite,     
                                                 Mem_Address,  
-                                                MemWriteData, 
+                                                b_reg_out, 
                                                 MemData);     
     
     REGISTER_FILE_MPIS32     : Register_v2 port map (CLK,
@@ -262,7 +265,7 @@ pc_write_signal <= PCWrite or (PCWriteCond and(BNECond xor Zero));
                                                  
     pc_source_mux2            : mux_one generic map(MIPS32_DATA_LENGTH)
                                         port map(JR_SIGNAL,
-                                                 pc_source_mux_out,
+                                                 pc_source_mux1_out,
                                                  ALU_OUT_out_data,
                                                  pc_in);
     
