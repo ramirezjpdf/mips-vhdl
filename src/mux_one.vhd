@@ -17,7 +17,7 @@ begin
         case sel is
             when '0'    => out_data <= in0_data;
             when '1'    => out_data <= in1_data;
-            when others => out_data <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+            when others => out_data <= (others => 'X');
         end case;
     end process;
 end behav;
