@@ -74,6 +74,7 @@ architecture struct of mips32_struct is
     end component;
     
     component reg_aux is
+        generic(is_rising_edge : boolean := True);
         port(CLK : in std_logic;
             in_data : in std_logic_vector(31 downto 0);
             out_data: out std_logic_vector (31 downto 0));
@@ -252,9 +253,9 @@ pc_write_signal <= PCWrite or (PCWriteCond and(BNECond xor Zero));
                                                 ALUresult,
                                                 ALU_OUT_out_data);
                                                  
-    jump_address(31 downto 28) <= pc_out(31 downto 28);
-    jump_address(27 downto 2)  <= ir_out(25 downto 0);
-    jump_address(1 downto 0)   <= "00";
+    jump_address <= pc_out(31 downto 28) &
+                    ir_out(25 downto 0) &
+                    "00";
     pc_source_mux1            : mux_two generic map(MIPS32_DATA_LENGTH)
                                         port map(PCSource,
                                                  ALUresult,
