@@ -18,13 +18,14 @@ begin
     mips32 : mips32_struct port map(t_clk);
 
     process
+    variable cycles : integer := 13;
     begin
         t_clk <= '1';
         wait for 1 ps;
-        t_clk <= '0';
-        wait for 1 ps;
-        t_clk <= '1';
-        wait for 1 ps;
+        for i in 0 to (cycles * 2) loop
+            t_clk <= not t_clk;
+            wait for 1 ps;
+        end loop;
         wait;
     end process;
 end behav;
