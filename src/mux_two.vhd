@@ -21,7 +21,12 @@ begin
             when "01"    => out_data <= in1_data;
             when "10"    => out_data <= in2_data;
             when "11"    => out_data <= in3_data;
-            when others => out_data <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+            when others =>
+                if data_length = 32 then
+                   out_data <= "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+                elsif data_length = 5 then
+                   out_data <= "XXXXX";
+                end if;
         end case;
     end process;
 end behav;
