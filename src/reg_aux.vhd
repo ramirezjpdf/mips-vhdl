@@ -14,7 +14,7 @@ begin
     process(clk)
     begin
         out_data <= reg;
-        if rising_edge(clk) then
+        if falling_edge(clk) then
             reg <= in_data;
             out_data <= in_data;
         end if;
