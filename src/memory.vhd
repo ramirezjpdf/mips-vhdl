@@ -48,18 +48,21 @@ architecture Behavioral of memory is
     signal memory : rom_mem := MEM_INIT_STATE; --initialized memory with instructions
 
 begin
-    process (CLK) is
+
+    process(Address, MemRead)
     begin
-        if rising_edge(CLK) then
-			if MemRead = '1' then
-		    	MemData <= memory(to_integer(unsigned(Address)));
-		    end if;
-		   	
-		    if MemWrite = '1' then
-		       	memory(to_integer(unsigned(Address))) <= WriteData;
-		    end if;
+        if MemRead = '1' then
+            MemData <= memory(to_integer(unsigned(Address)));
+	end if;
+    end process;
+
+    process (CLK) is
+    begin	   
+        if rising_edge(CLK) then	
+            if MemWrite = '1' then
+	        memory(to_integer(unsigned(Address))) <= WriteData;
+            end if;
         end if;
-        
     end process;
 
 end Behavioral;
