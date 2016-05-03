@@ -52,3 +52,11 @@ Instruction Addi -> PCWriteCond = '0'
                   ALUSrcA = '1',   --state 2
                   ALUSrcB = '10',  --state 2
                   PCSource = "X"
+
+Test instructions:
+
+addi $s0, $t0, 1
+addi $s1, $t1, 1
+add $s0, $s1, $s0
+sw $s0, 10($t1)
+lw $s2, 10($t1) 
