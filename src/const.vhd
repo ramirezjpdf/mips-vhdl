@@ -36,7 +36,6 @@ package const is
     -- REGISTER FILE
     constant REG_ZERO_ADDRS : std_logic_vector (4 downto 0) := "00000";
     constant REG_RA_ADDRES  : std_logic_vector (4 downto 0) := "11111";
-    constant REG_FILE_ADDR_LENGTH : integer := 5;
     type reg is array(31 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
     constant REG_INIT_STATE : reg := (
         (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"),
@@ -45,7 +44,10 @@ package const is
         (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000")
     );
     
-    constant MIPS32_DATA_LENGTH : integer := 32;
+    -- GENERIC DATA LENGTHS
+    constant MIPS32_DATA_LENGTH   : integer := 32;
+    constant REG_FILE_ADDR_LENGTH : integer := 5;
+    constant LED_DATA_LENGTH      : integer := 16;
 
     -- ROM TYPE MEMORY
     type rom_mem is array(0 to 15) of STD_LOGIC_VECTOR (31 downto 0);
@@ -59,14 +61,15 @@ package const is
 
 
     -- OP CODES
-    constant R_TYPE : std_logic_vector (5 downto 0) := "000000";
-    constant LW     : std_logic_vector (5 downto 0) := "100011";
-    constant SW     : std_logic_vector (5 downto 0) := "101011";
-    constant BEQ    : std_logic_vector (5 downto 0) := "000100";
-    constant BNE    : std_logic_vector (5 downto 0) := "000101";
-    constant J      : std_logic_vector (5 downto 0) := "000010";
-    constant JAL    : std_logic_vector (5 downto 0) := "000011";
-    constant ADDI   : std_logic_vector (5 downto 0) := "001000";
+    constant R_TYPE  : std_logic_vector (5 downto 0) := "000000";
+    constant LW      : std_logic_vector (5 downto 0) := "100011";
+    constant SW      : std_logic_vector (5 downto 0) := "101011";
+    constant BEQ     : std_logic_vector (5 downto 0) := "000100";
+    constant BNE     : std_logic_vector (5 downto 0) := "000101";
+    constant J       : std_logic_vector (5 downto 0) := "000010";
+    constant JAL     : std_logic_vector (5 downto 0) := "000011";
+    constant ADDI    : std_logic_vector (5 downto 0) := "001000";
+    constant OUT_LED : std_logic_vector (5 downto 0) := "100000";
     
     -- CONTROL LINES
     constant DEASSERTED              : std_logic := '0';

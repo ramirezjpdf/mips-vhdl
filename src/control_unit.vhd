@@ -22,13 +22,14 @@ entity control_unit is
         alu_op        : out std_logic_vector (1 downto 0);
         alu_src_a     : out std_logic;
         alu_src_b     : out std_logic_vector (1 downto 0);
-        pc_source     : out std_logic_vector (1 downto 0)
+        pc_source     : out std_logic_vector (1 downto 0);
+        out_led_write : out std_logic
     );
 end control_unit;
 
 architecture behav of control_unit is
 
-subtype state is integer range 0 to 12;
+subtype state is integer range 0 to 13;
 
 -- GENERAL STATES
 constant INSTRUCTION_FETCH       : state := 0;
@@ -48,6 +49,8 @@ constant BNE_COMPLETION          : state := 11;
 -- JUMP STATES
 constant JUMP_COMPLETION         : state := 9;
 constant JAL_COMPLETION          : state := 10;
+-- OUT LED STATES
+constant OUT_LED_COMPLETION      : state := 13;
 
 
 -- CURRENT_STATE
@@ -75,6 +78,8 @@ begin
                             current_state <= JUMP_COMPLETION;
                         when JAL =>
                             current_state <= JAL_COMPLETION;
+                        when OUT_LED =>
+                            current_state <= OUT_LED_COMPLETION;
                         when others =>
                             current_state <= INSTRUCTION_FETCH;
                     end case;
@@ -109,6 +114,10 @@ begin
                 -- JUMP STATES
                 when JUMP_COMPLETION | JAL_COMPLETION =>
                     current_state <= INSTRUCTION_FETCH;
+                    
+                -- OUT_LED STATES
+                when OUT_LED_COMPLETION =>
+                    current_state <= INSTRUCTION_FETCH;
 
                 -- OTHERS
                 when others =>
@@ -136,6 +145,7 @@ begin
                 alu_src_a     <= DEASSERTED;
                 alu_src_b     <= FOUR_ALU_SRC_B;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                out_led_write <= DEASSERTED;
             when INST_DECODE_REG_READ =>
                 pc_write_cond <= DEASSERTED; 
                 bne_cond      <= DEASSERTED;
@@ -151,7 +161,8 @@ begin
                 alu_src_a     <= DEASSERTED;
                 alu_src_b     <= BRANCH_ADDR_ALU_SRC_B;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
-
+                out_led_write <= DEASSERTED;
+                
             -- LW OR SW AND ADDI  STATES
             when MEM_ADDR_COMP_ADDI_EXEC =>
                 pc_write_cond <= DEASSERTED; 
@@ -168,6 +179,7 @@ begin
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= IMMED_ALU_SRC_B;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                out_led_write <= DEASSERTED;
             when LW_MEM_ACCESS         =>
                 pc_write_cond <= DEASSERTED; 
                 bne_cond      <= DEASSERTED;
@@ -183,6 +195,7 @@ begin
                 alu_src_a     <= DEASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                out_led_write <= DEASSERTED;
             when MEM_READ_COMPLETION  =>
                 pc_write_cond <= DEASSERTED; 
                 bne_cond      <= DEASSERTED;
@@ -198,6 +211,7 @@ begin
                 alu_src_a     <= DEASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                out_led_write <= DEASSERTED;
             when SW_MEM_ACCESS         =>
                 pc_write_cond <= DEASSERTED; 
                 bne_cond      <= DEASSERTED;
@@ -213,6 +227,7 @@ begin
                 alu_src_a     <= DEASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                out_led_write <= DEASSERTED;
             when ADDI_COMPLETION      =>
                 pc_write_cond <= DEASSERTED; 
                 bne_cond      <= DEASSERTED;
@@ -228,6 +243,7 @@ begin
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                out_led_write <= DEASSERTED;
 
             -- R-TYPE ARITH AND LOGIC STATES
             when EXECUTION            =>
@@ -245,6 +261,7 @@ begin
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                out_led_write <= DEASSERTED;
             when R_TYPE_COMPLETION    =>
                 pc_write_cond <= DEASSERTED; 
                 bne_cond      <= DEASSERTED;
@@ -260,6 +277,7 @@ begin
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
                 pc_source     <= CURRENT_PC_AS_PC_SOURCE;
+                out_led_write <= DEASSERTED;
 
             -- BRANCH STATES    
             when BEQ_COMPLETION    =>
@@ -277,6 +295,7 @@ begin
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
                 pc_source     <= ALU_OUT_PC_SOURCE;
+                out_led_write <= DEASSERTED;
             when BNE_COMPLETION    =>
                 pc_write_cond <= ASSERTED; 
                 bne_cond      <= ASSERTED;
@@ -292,6 +311,7 @@ begin
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
                 pc_source     <= ALU_OUT_PC_SOURCE;
+                out_led_write <= DEASSERTED;
 
             -- JUMP STATES
             when JUMP_COMPLETION      =>
@@ -309,6 +329,7 @@ begin
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
                 pc_source     <= JUMP_PC_SOURCE;
+                out_led_write <= DEASSERTED;
             when JAL_COMPLETION       =>
                 pc_write_cond <= DEASSERTED; 
                 bne_cond      <= DEASSERTED;
@@ -324,6 +345,24 @@ begin
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
                 pc_source     <= JUMP_PC_SOURCE;
+                out_led_write <= DEASSERTED;
+                
+            when OUT_LED_COMPLETION =>
+                pc_write_cond <= DEASSERTED; 
+                bne_cond      <= DEASSERTED;
+                pc_write      <= DEASSERTED;
+                i_or_d        <= DEASSERTED;
+                mem_read      <= DEASSERTED;
+                mem_write     <= DEASSERTED;
+                mem_to_reg    <= ALU_OUT_MEM_TO_REG;
+                ir_write      <= DEASSERTED;
+                reg_write     <= DEASSERTED;
+                reg_dst       <= RT_REG_DST;
+                alu_op        <= LW_OR_SW_ADD;
+                alu_src_a     <= ASSERTED;
+                alu_src_b     <= IMMED_ALU_SRC_B;
+                pc_source     <= ALU_RESULT_PC_SOURCE;
+                out_led_write <= ASSERTED;
 
             -- OTHERS
             when others      =>
@@ -341,6 +380,7 @@ begin
                 alu_src_a     <= 'X';
                 alu_src_b     <= "XX";
                 pc_source     <= "XX";
+                out_led_write <= 'X';
         end case;
     
     end process;

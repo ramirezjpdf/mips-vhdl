@@ -7,7 +7,7 @@ use work.const.all;
 
 entity mips32_struct is
     port(CLK : in STD_LOGIC;
-         MipsReadData : out STD_LOGIC_VECTOR (31 downto 0));    --Output of mips32_struct used for debuging during simulations
+         LED : out STD_LOGIC_VECTOR (15 downto 0));
 end entity;
 
 architecture struct of mips32_struct is
@@ -106,8 +106,9 @@ architecture struct of mips32_struct is
     end component;
     
     --Control signals
-    signal ALUop,  ALUSrcB, PCSource, MemtoReg, RegDst : STD_LOGIC_VECTOR(1 downto 0);
-    signal BNECond, PCWriteCond, PCWrite, IorD, RegWrite, MemWrite, MemRead, IRWrite, ALUSrcA : STD_LOGIC;
+    signal ALUop,  ALUSrcB, PCSource, MemtoReg, RegDst      : STD_LOGIC_VECTOR(1 downto 0);
+    signal BNECond, PCWriteCond, PCWrite, IorD, RegWrite,
+           MemWrite, MemRead, IRWrite, ALUSrcA, OutLedWrite : STD_LOGIC;
     
     --Memory signals
     signal Mem_Address, MemData : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
@@ -124,17 +125,24 @@ architecture struct of mips32_struct is
     signal ALU_CONTROL_SIGNAL : STD_LOGIC_VECTOR (3 downto 0);
     signal JR_SIGNAL : STD_LOGIC;
     
-    --Auxiliar Registers
+    --pc signals
     signal pc_out : STD_LOGIC_VECTOR (31 downto 0);
     signal pc_in : STD_LOGIC_VECTOR (31 downto 0);
     signal pc_write_signal : STD_LOGIC;
+
+    --ir signals
     signal ir_out : STD_LOGIC_VECTOR (31 downto 0);
+
+    --alu signals
     signal a_reg_out : std_logic_vector(31 downto 0); 
     signal b_reg_out : std_logic_vector(31 downto 0); 
     signal ALU_OUT_out_data : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
-    signal mdr_out : STD_LOGIC_VECTOR (31 downto 0);
     signal SignExt16_32 : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
-    signal SignExt16_32_shift_left_2 : STD_LOGIC_VECTOR (31 downto 0);
+
+    --mdr signals
+    signal mdr_out : STD_LOGIC_VECTOR (31 downto 0);
+    
+    --jump signals
     signal jump_address : STD_LOGIC_VECTOR (31 downto 0);
     signal pc_source_mux1_out: STD_LOGIC_VECTOR (31 downto 0);
 
@@ -184,9 +192,10 @@ begin
                                                       ALUOp,        
                                                       ALUSrcA,     
                                                       ALUSrcB,     
-                                                      PCSource);
+                                                      PCSource,
+                                                      OutLedWrite);
 
-pc_write_signal <= PCWrite or (PCWriteCond and(BNECond xor Zero));
+    pc_write_signal <= PCWrite or (PCWriteCond and(BNECond xor Zero));
     PC                       : reg_special port map (CLK,
                                                      pc_write_signal,
                                                      pc_in,
@@ -239,14 +248,13 @@ pc_write_signal <= PCWrite or (PCWriteCond and(BNECond xor Zero));
                                                 
     SignExt16_32 <= std_logic_vector(resize(signed(ir_out(15 downto 0)),
                                      SignExt16_32'length));
-    SignExt16_32_shift_left_2 <= std_logic_vector(
-                                     signed(SignExt16_32) sll  2);
+    
     alu_source_b_mux         : mux_two generic map(MIPS32_DATA_LENGTH)
                                        port map(ALUSrcB,
                                                 b_reg_out,
                                                 x"00000001",
                                                 SignExt16_32,
-                                                SignExt16_32_shift_left_2,
+                                                SignExt16_32,
                                                 B);
 
     ALU_OUT                  : reg_aux port map(CLK,
@@ -270,4 +278,9 @@ pc_write_signal <= PCWrite or (PCWriteCond and(BNECond xor Zero));
                                                  ALU_OUT_out_data,
                                                  pc_in);
     
+    out_led_reg_special       : reg_special generic map(LED_DATA_LENGTH)
+                                            port map(CLK,
+                                                     OutLedWrite,
+                                                     ALUresult(15 downto 0),
+                                                     LED);
 end architecture;
