@@ -273,7 +273,7 @@ begin
                 ir_write      <= DEASSERTED;
                 reg_write     <= ASSERTED;
                 reg_dst       <= RD_REG_DST;
-                alu_op        <= LW_OR_SW_ADD;
+                alu_op        <= R_TYPE_INST;
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
                 pc_source     <= CURRENT_PC_AS_PC_SOURCE;
