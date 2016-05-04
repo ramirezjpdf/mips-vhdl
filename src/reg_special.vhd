@@ -8,8 +8,8 @@ entity reg_special is
     generic(data_length : integer := MIPS32_DATA_LENGTH); 
     port(clk : in std_logic;
          write_signal : in std_logic;
-         in_data : in std_logic_vector(data_length downto 0);
-         out_data: out std_logic_vector (data_length downto 0));
+         in_data : in std_logic_vector(data_length - 1 downto 0);
+         out_data: out std_logic_vector (data_length - 1 downto 0));
 end reg_special;
 
 architecture behav of reg_special is
