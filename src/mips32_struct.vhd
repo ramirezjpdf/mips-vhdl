@@ -69,7 +69,8 @@ architecture struct of mips32_struct is
             alu_op        : out std_logic_vector (1 downto 0);
             alu_src_a     : out std_logic;
             alu_src_b     : out std_logic_vector (1 downto 0);
-            pc_source     : out std_logic_vector (1 downto 0)
+            pc_source     : out std_logic_vector (1 downto 0);
+            out_led_write : out std_logic
         );
     end component;
     
@@ -81,10 +82,11 @@ architecture struct of mips32_struct is
     end component;
     
     component reg_special is
+        generic(data_length : integer := MIPS32_DATA_LENGTH);
         port(CLK : in std_logic;
             write_signal : in std_logic;
-            in_data : in std_logic_vector(31 downto 0);
-            out_data: out std_logic_vector (31 downto 0));
+            in_data : in std_logic_vector(data_length - 1 downto 0);
+            out_data: out std_logic_vector (data_length - 1 downto 0));
     end component;
     
     component mux_one is

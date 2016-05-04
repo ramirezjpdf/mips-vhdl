@@ -13,7 +13,7 @@ entity reg_special is
 end reg_special;
 
 architecture behav of reg_special is
-signal reg : std_logic_vector(data_length downto 0) := x"00000000";
+signal reg : std_logic_vector(data_length - 1 downto 0) := x"00000000";
 begin
     process(clk)
     begin
