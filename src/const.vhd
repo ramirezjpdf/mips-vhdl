@@ -36,7 +36,6 @@ package const is
     -- REGISTER FILE
     constant REG_ZERO_ADDRS : std_logic_vector (4 downto 0) := "00000";
     constant REG_RA_ADDRES  : std_logic_vector (4 downto 0) := "11111";
-    constant REG_FILE_ADDR_LENGTH : integer := 5;
     type reg is array(31 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
     constant REG_INIT_STATE : reg := (
         (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"),
@@ -45,7 +44,10 @@ package const is
         (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000"), (x"00000000")
     );
     
-    constant MIPS32_DATA_LENGTH : integer := 32;
+    -- GENERIC DATA LENGTHS
+    constant MIPS32_DATA_LENGTH   : integer := 32;
+    constant REG_FILE_ADDR_LENGTH : integer := 5;
+    constant LED_DATA_LENGTH      : integer := 16;
 
     -- ROM TYPE MEMORY
     type rom_mem is array(0 to 15) of STD_LOGIC_VECTOR (31 downto 0);
