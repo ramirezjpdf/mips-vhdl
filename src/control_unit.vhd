@@ -233,7 +233,7 @@ begin
             when EXECUTION            =>
                 pc_write_cond <= DEASSERTED; 
                 bne_cond      <= DEASSERTED;
-                pc_write      <= ASSERTED;
+                pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
