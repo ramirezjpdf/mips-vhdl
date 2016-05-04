@@ -264,8 +264,8 @@ begin
                                                 ALU_OUT_out_data);
                                                  
     jump_address <= pc_out(31 downto 28) &
-                    ir_out(25 downto 0) &
-                    "00";
+                    std_logic_vector(
+                        resize(unsigned(ir_out(25 downto 0)), 28));
     pc_source_mux1            : mux_two generic map(MIPS32_DATA_LENGTH)
                                         port map(PCSource,
                                                  ALUresult,
