@@ -239,14 +239,13 @@ pc_write_signal <= PCWrite or (PCWriteCond and(BNECond xor Zero));
                                                 
     SignExt16_32 <= std_logic_vector(resize(signed(ir_out(15 downto 0)),
                                      SignExt16_32'length));
-    SignExt16_32_shift_left_2 <= std_logic_vector(
-                                     signed(SignExt16_32) sll  2);
+    
     alu_source_b_mux         : mux_two generic map(MIPS32_DATA_LENGTH)
                                        port map(ALUSrcB,
                                                 b_reg_out,
                                                 x"00000001",
                                                 SignExt16_32,
-                                                SignExt16_32_shift_left_2,
+                                                SignExt16_32,
                                                 B);
 
     ALU_OUT                  : reg_aux port map(CLK,
