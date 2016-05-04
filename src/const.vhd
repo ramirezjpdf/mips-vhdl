@@ -59,14 +59,15 @@ package const is
 
 
     -- OP CODES
-    constant R_TYPE : std_logic_vector (5 downto 0) := "000000";
-    constant LW     : std_logic_vector (5 downto 0) := "100011";
-    constant SW     : std_logic_vector (5 downto 0) := "101011";
-    constant BEQ    : std_logic_vector (5 downto 0) := "000100";
-    constant BNE    : std_logic_vector (5 downto 0) := "000101";
-    constant J      : std_logic_vector (5 downto 0) := "000010";
-    constant JAL    : std_logic_vector (5 downto 0) := "000011";
-    constant ADDI   : std_logic_vector (5 downto 0) := "001000";
+    constant R_TYPE  : std_logic_vector (5 downto 0) := "000000";
+    constant LW      : std_logic_vector (5 downto 0) := "100011";
+    constant SW      : std_logic_vector (5 downto 0) := "101011";
+    constant BEQ     : std_logic_vector (5 downto 0) := "000100";
+    constant BNE     : std_logic_vector (5 downto 0) := "000101";
+    constant J       : std_logic_vector (5 downto 0) := "000010";
+    constant JAL     : std_logic_vector (5 downto 0) := "000011";
+    constant ADDI    : std_logic_vector (5 downto 0) := "001000";
+    constant OUT_LED : std_logic_vector (5 downto 0) := "100000";
     
     -- CONTROL LINES
     constant DEASSERTED              : std_logic := '0';
