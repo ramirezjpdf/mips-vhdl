@@ -10,6 +10,13 @@ alu
 alu_control
 control_unit
 const
+memory
+mips32_struct
+mux_one
+mux_two
+reg_aux
+reg_special
+register_v2
 *_testbench
 
 # vcd files
