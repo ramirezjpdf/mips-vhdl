@@ -2,6 +2,8 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
+use work.const.all;
+
 entity reg_aux is
     generic(data_length    : integer := MIPS32_DATA_LENGTH;
             is_rising_edge : boolean := True);
