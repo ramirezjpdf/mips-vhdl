@@ -3,14 +3,15 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 entity reg_aux is
-    generic(is_rising_edge : boolean := True);
+    generic(data_length    : integer := MIPS32_DATA_LENGTH;
+            is_rising_edge : boolean := True);
     port(clk : in std_logic;
-         in_data : in std_logic_vector(31 downto 0);
-         out_data: out std_logic_vector (31 downto 0));
+         in_data : in std_logic_vector(data_length - 1 downto 0);
+         out_data: out std_logic_vector (data_length - 1 downto 0));
 end reg_aux;
 
 architecture behav of reg_aux is
-signal reg : std_logic_vector(31 downto 0) := x"00000000";
+signal reg : std_logic_vector(data_length - 1 downto 0) := (others => '0');
 begin
     process(clk)
     begin
