@@ -7,7 +7,7 @@ use work.const.all;
 
 entity mips32_struct is
     port(CLK : in STD_LOGIC;
-         LED : out STD_LOGIC_VECTOR (15 downto 0));
+         LED : out STD_LOGIC_VECTOR (31 downto 0));
 end entity;
 
 architecture struct of mips32_struct is
@@ -282,9 +282,9 @@ begin
                                                  ALU_OUT_out_data,
                                                  pc_in);
     
-    out_led_reg_special       : reg_special generic map(LED_DATA_LENGTH)
+    out_led_reg_special       : reg_special generic map(MIPS32_DATA_LENGTH)
                                             port map(CLK,
                                                      OutLedWrite,
-                                                     ALUresult(15 downto 0),
+                                                     ALUresult,
                                                      LED);
 end architecture;
