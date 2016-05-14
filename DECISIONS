@@ -60,3 +60,18 @@ addi $s1, $t1, 1
 add $s0, $s1, $s0
 sw $s0, 10($t1)
 lw $s2, 10($t1) 
+
+
+13/05/2016
+
+Floating-point instructions  
+
+instruction   opcode    fmt      rt       rs       rd     funct
+  add.s       010001   10000   5 bits   5 bits   5 bits   000000
+  sub.s       010001   10000   5 bits   5 bits   5 bits   000001
+  mul.s       010001   10000   5 bits   5 bits   5 bits   000010
+  div.s       010001   10000   5 bits   5 bits   5 bits   000011
+  sqr.s       010001   10000   5 bits   5 bits   5 bits   000100
+
+The 5 bits 'fmt' field determine whether the operation is single precision (10000) or double precision (10001). 
+In this project we only work with single precision.
