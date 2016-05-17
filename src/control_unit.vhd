@@ -6,8 +6,9 @@ use work.const.all;
 
 entity control_unit is
     port(
-        clk     : in std_logic;
-        op_code : in std_logic_vector (5 downto 0);
+        clk       : in std_logic;
+        op_code   : in std_logic_vector (5 downto 0);
+        fpu_ready : in std_logic;
         
         pc_write_cond : out std_logic;
         bne_cond      : out std_logic;
@@ -22,14 +23,16 @@ entity control_unit is
         alu_op        : out std_logic_vector (1 downto 0);
         alu_src_a     : out std_logic;
         alu_src_b     : out std_logic_vector (1 downto 0);
+        aluout_src    : out std_logic;
         pc_source     : out std_logic_vector (1 downto 0);
+        start_fpu     : out std_logic;
         out_led_write : out std_logic
     );
 end control_unit;
 
 architecture behav of control_unit is
 
-subtype state is integer range 0 to 13;
+subtype state is integer range 0 to 16;
 
 -- GENERAL STATES
 constant INSTRUCTION_FETCH       : state := 0;
@@ -43,6 +46,10 @@ constant ADDI_COMPLETION         : state := 12;
 -- R-TYPE ARITH AND LOGIC STATES
 constant EXECUTION               : state := 6;
 constant R_TYPE_COMPLETION       : state := 7;
+-- FP EXECUTION STATES
+constant FP_PRE_EXECUTION        : state := 16;
+constant FP_EXECUTION            : state := 14;
+constant FP_TYPE_COMPLETION      : state := 15;
 -- BRANCH STATES
 constant BEQ_COMPLETION          : state := 8;
 constant BNE_COMPLETION          : state := 11;
@@ -70,6 +77,8 @@ begin
                             current_state <= MEM_ADDR_COMP_ADDI_EXEC;
                         when R_TYPE =>
                             current_state <= EXECUTION;
+                        when FP_TYPE =>
+                            current_state <= FP_PRE_EXECUTION;
                         when BEQ =>
                             current_state <= BEQ_COMPLETION;
                         when BNE =>
@@ -105,6 +114,17 @@ begin
                 when EXECUTION =>
                     current_state <= R_TYPE_COMPLETION;
                 when R_TYPE_COMPLETION =>
+                    current_state <= INSTRUCTION_FETCH;
+                
+                -- FP-TYPE INSTRUCTIONS
+                when FP_PRE_EXECUTION =>
+                    current_state <= FP_EXECUTION;
+                when FP_EXECUTION => 
+                    if fpu_ready = '1' then
+                        current_state <= FP_TYPE_COMPLETION;
+                    else
+                        current_state <= FP_EXECUTION;
+                when FP_TYPE_COMPLETION =>
                     current_state <= INSTRUCTION_FETCH;
 
                 -- BRANCH STATES
@@ -144,7 +164,9 @@ begin
                 alu_op        <= LW_OR_SW_ADD;
                 alu_src_a     <= DEASSERTED;
                 alu_src_b     <= FOUR_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
             when INST_DECODE_REG_READ =>
                 pc_write_cond <= DEASSERTED; 
@@ -160,7 +182,9 @@ begin
                 alu_op        <= LW_OR_SW_ADD;
                 alu_src_a     <= DEASSERTED;
                 alu_src_b     <= BRANCH_ADDR_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
                 
             -- LW OR SW AND ADDI  STATES
@@ -178,7 +202,9 @@ begin
                 alu_op        <= LW_OR_SW_ADD;
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= IMMED_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
             when LW_MEM_ACCESS         =>
                 pc_write_cond <= DEASSERTED; 
@@ -194,7 +220,9 @@ begin
                 alu_op        <= LW_OR_SW_ADD;
                 alu_src_a     <= DEASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
             when MEM_READ_COMPLETION  =>
                 pc_write_cond <= DEASSERTED; 
@@ -210,7 +238,9 @@ begin
                 alu_op        <= LW_OR_SW_ADD;
                 alu_src_a     <= DEASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
             when SW_MEM_ACCESS         =>
                 pc_write_cond <= DEASSERTED; 
@@ -226,7 +256,9 @@ begin
                 alu_op        <= LW_OR_SW_ADD;
                 alu_src_a     <= DEASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
             when ADDI_COMPLETION      =>
                 pc_write_cond <= DEASSERTED; 
@@ -242,7 +274,9 @@ begin
                 alu_op        <= LW_OR_SW_ADD;
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
 
             -- R-TYPE ARITH AND LOGIC STATES
@@ -260,7 +294,9 @@ begin
                 alu_op        <= R_TYPE_INST;
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
             when R_TYPE_COMPLETION    =>
                 pc_write_cond <= DEASSERTED; 
@@ -276,9 +312,70 @@ begin
                 alu_op        <= R_TYPE_INST;
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= CURRENT_PC_AS_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
-
+                          
+            -- FP TYPE INSTRUCTIONS STATES                             
+            when FP_PRE_EXECUTION            =>                                 
+                pc_write_cond <= DEASSERTED;                             
+                bne_cond      <= DEASSERTED;                             
+                pc_write      <= DEASSERTED;                             
+                i_or_d        <= DEASSERTED;                             
+                mem_read      <= DEASSERTED;                             
+                mem_write     <= DEASSERTED;                             
+                mem_to_reg    <= ALU_OUT_MEM_TO_REG;                     
+                ir_write      <= DEASSERTED;                             
+                reg_write     <= DEASSERTED;                             
+                reg_dst       <= RT_REG_DST;                             
+                alu_op        <= FP_TYPE_INST;                            
+                alu_src_a     <= ASSERTED;                               
+                alu_src_b     <= B_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;   
+                aluout_src    <= ASSERTED;                         
+                pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= ASSERTED;           
+                out_led_write <= DEASSERTED; 
+                
+            when FP_EXECUTION            =>                  
+                pc_write_cond <= DEASSERTED;              
+                bne_cond      <= DEASSERTED;              
+                pc_write      <= DEASSERTED;              
+                i_or_d        <= DEASSERTED;              
+                mem_read      <= DEASSERTED;              
+                mem_write     <= DEASSERTED;              
+                mem_to_reg    <= ALU_OUT_MEM_TO_REG;      
+                ir_write      <= DEASSERTED;              
+                reg_write     <= DEASSERTED;              
+                reg_dst       <= RT_REG_DST;              
+                alu_op        <= FP_TYPE_INST;             
+                alu_src_a     <= ASSERTED;                
+                alu_src_b     <= B_ALU_SRC_B; 
+                aluout_src    <= ASSERTED;            
+                pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;    
+                out_led_write <= DEASSERTED;              
+                                                
+            when FP_TYPE_COMPLETION    =>                                 
+                pc_write_cond <= DEASSERTED;                             
+                bne_cond      <= DEASSERTED;                             
+                pc_write      <= ASSERTED;                               
+                i_or_d        <= DEASSERTED;                             
+                mem_read      <= DEASSERTED;                             
+                mem_write     <= DEASSERTED;                             
+                mem_to_reg    <= ALU_OUT_MEM_TO_REG;                     
+                ir_write      <= DEASSERTED;                             
+                reg_write     <= ASSERTED;                               
+                reg_dst       <= RD_REG_DST;                             
+                alu_op        <= FP_TYPE_INST;                            
+                alu_src_a     <= ASSERTED;                               
+                alu_src_b     <= B_ALU_SRC_B;
+                aluout_src    <= ASSERTED;                            
+                pc_source     <= CURRENT_PC_AS_PC_SOURCE; 
+                start_fpu     <= DEASSERTED;               
+                out_led_write <= DEASSERTED;              
+            
             -- BRANCH STATES    
             when BEQ_COMPLETION    =>
                 pc_write_cond <= ASSERTED; 
@@ -294,7 +391,9 @@ begin
                 alu_op        <= BEQ_OR_BNE_SUB;
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= ALU_OUT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
             when BNE_COMPLETION    =>
                 pc_write_cond <= ASSERTED; 
@@ -310,7 +409,9 @@ begin
                 alu_op        <= BEQ_OR_BNE_SUB;
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= ALU_OUT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
 
             -- JUMP STATES
@@ -328,7 +429,9 @@ begin
                 alu_op        <= LW_OR_SW_ADD;
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= JUMP_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
             when JAL_COMPLETION       =>
                 pc_write_cond <= DEASSERTED; 
@@ -344,7 +447,9 @@ begin
                 alu_op        <= LW_OR_SW_ADD;
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= B_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= JUMP_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= DEASSERTED;
                 
             when OUT_LED_COMPLETION =>
@@ -361,7 +466,9 @@ begin
                 alu_op        <= LW_OR_SW_ADD;
                 alu_src_a     <= ASSERTED;
                 alu_src_b     <= IMMED_ALU_SRC_B;
+                aluout_src    <= DEASSERTED;
                 pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;
                 out_led_write <= ASSERTED;
 
             -- OTHERS
