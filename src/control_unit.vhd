@@ -14,6 +14,7 @@ entity control_unit is
         bne_cond      : out std_logic;
         pc_write      : out std_logic;
         i_or_d        : out std_logic;
+        RASrc         : out std_logic;
         mem_read      : out std_logic;
         mem_write     : out std_logic;
         mem_to_reg    : out std_logic_vector (1 downto 0);
@@ -124,6 +125,7 @@ begin
                         current_state <= FP_TYPE_COMPLETION;
                     else
                         current_state <= FP_EXECUTION;
+                    end if;
                 when FP_TYPE_COMPLETION =>
                     current_state <= INSTRUCTION_FETCH;
 
@@ -155,6 +157,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= ASSERTED;
                 i_or_d        <= DEASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= ASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;
@@ -173,6 +176,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;
@@ -193,6 +197,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;
@@ -211,6 +216,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= ASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= ASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;
@@ -229,6 +235,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= MDR_MEM_TO_REG;
@@ -247,6 +254,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= ASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= ASSERTED;
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;
@@ -265,6 +273,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;
@@ -285,6 +294,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;
@@ -303,6 +313,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= ASSERTED;
                 i_or_d        <= DEASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;
@@ -322,17 +333,17 @@ begin
                 pc_write_cond <= DEASSERTED;                             
                 bne_cond      <= DEASSERTED;                             
                 pc_write      <= DEASSERTED;                             
-                i_or_d        <= DEASSERTED;                             
+                i_or_d        <= DEASSERTED;
+                RASrc         <= ASSERTED;                             
                 mem_read      <= DEASSERTED;                             
                 mem_write     <= DEASSERTED;                             
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;                     
                 ir_write      <= DEASSERTED;                             
                 reg_write     <= DEASSERTED;                             
-                reg_dst       <= RT_REG_DST;                             
+                reg_dst       <= RA_REG_DST;                             
                 alu_op        <= FP_TYPE_INST;                            
                 alu_src_a     <= ASSERTED;                               
-                alu_src_b     <= B_ALU_SRC_B;
-                aluout_src    <= DEASSERTED;   
+                alu_src_b     <= B_ALU_SRC_B;  
                 aluout_src    <= ASSERTED;                         
                 pc_source     <= ALU_RESULT_PC_SOURCE;
                 start_fpu     <= ASSERTED;           
@@ -342,13 +353,14 @@ begin
                 pc_write_cond <= DEASSERTED;              
                 bne_cond      <= DEASSERTED;              
                 pc_write      <= DEASSERTED;              
-                i_or_d        <= DEASSERTED;              
+                i_or_d        <= DEASSERTED;
+                RASrc         <= ASSERTED;              
                 mem_read      <= DEASSERTED;              
                 mem_write     <= DEASSERTED;              
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;      
                 ir_write      <= DEASSERTED;              
                 reg_write     <= DEASSERTED;              
-                reg_dst       <= RT_REG_DST;              
+                reg_dst       <= RA_REG_DST;              
                 alu_op        <= FP_TYPE_INST;             
                 alu_src_a     <= ASSERTED;                
                 alu_src_b     <= B_ALU_SRC_B; 
@@ -361,13 +373,14 @@ begin
                 pc_write_cond <= DEASSERTED;                             
                 bne_cond      <= DEASSERTED;                             
                 pc_write      <= ASSERTED;                               
-                i_or_d        <= DEASSERTED;                             
+                i_or_d        <= DEASSERTED;
+                RASrc         <= ASSERTED;                             
                 mem_read      <= DEASSERTED;                             
                 mem_write     <= DEASSERTED;                             
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;                     
                 ir_write      <= DEASSERTED;                             
                 reg_write     <= ASSERTED;                               
-                reg_dst       <= RD_REG_DST;                             
+                reg_dst       <= RA_REG_DST;                             
                 alu_op        <= FP_TYPE_INST;                            
                 alu_src_a     <= ASSERTED;                               
                 alu_src_b     <= B_ALU_SRC_B;
@@ -382,6 +395,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;
@@ -400,6 +414,7 @@ begin
                 bne_cond      <= ASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;
@@ -420,6 +435,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= ASSERTED;
                 i_or_d        <= DEASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;
@@ -438,6 +454,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= ASSERTED;
                 i_or_d        <= DEASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= PC_MEM_TO_REG;
@@ -457,6 +474,7 @@ begin
                 bne_cond      <= DEASSERTED;
                 pc_write      <= DEASSERTED;
                 i_or_d        <= DEASSERTED;
+                RASrc         <= DEASSERTED;
                 mem_read      <= DEASSERTED;
                 mem_write     <= DEASSERTED;
                 mem_to_reg    <= ALU_OUT_MEM_TO_REG;

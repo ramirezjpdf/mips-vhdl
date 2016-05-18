@@ -62,6 +62,7 @@ architecture struct of mips32_struct is
             bne_cond      : out std_logic;
             pc_write      : out std_logic;
             i_or_d        : out std_logic;
+            RASrc         : out std_logic;
             mem_read      : out std_logic;
             mem_write     : out std_logic;
             mem_to_reg    : out std_logic_vector (1 downto 0);
@@ -164,13 +165,13 @@ architecture struct of mips32_struct is
     signal ALUop,  ALUSrcB, PCSource, MemtoReg, RegDst      : STD_LOGIC_VECTOR(1 downto 0);
     signal BNECond, PCWriteCond, PCWrite, IorD, RegWrite,
            MemWrite, MemRead, IRWrite, ALUSrcA, OutLedWrite,
-           ALUOUT_SRC, START_FPU, FPU_READY : STD_LOGIC;
+           ALUOUT_SRC, START_FPU, FPU_READY, RASrc : STD_LOGIC;
     
     --Memory signals
     signal Mem_Address, MemData : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
     
     --Register file signals
-    signal WriteAddrs : STD_LOGIC_VECTOR (4 downto 0) := "00000";
+    signal WriteAddrs, read_register_1, read_register_2 : STD_LOGIC_VECTOR (4 downto 0) := "00000";
     signal RegWriteData, ReadData1, ReadData2 : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
     
     --ALU signals
@@ -220,12 +221,24 @@ begin
     
     REGISTER_FILE_MPIS32     : Register_v2 port map (CLK,
                                                      RegWrite,     
-                                                     ir_out(25 downto 21),   
-                                                     ir_out(20 downto 16),   
+                                                     read_register_1,   
+                                                     read_register_2,   
                                                      WriteAddrs,   
                                                      RegWriteData, 
                                                      ReadData1,    
-                                                     ReadData2);   
+                                                     ReadData2); 
+                                                     
+    read_register_1_mux      : mux_one generic map(REG_FILE_ADDR_LENGTH)
+                                          port map(RASrc,                                                                 
+                                                   ir_out(25 downto 21),                                                               
+                                                   ir_out(20 downto 16),                                                     
+                                                   read_register_1);                                                         
+                                                                                                      
+    read_register_2_mux      : mux_one generic map(REG_FILE_ADDR_LENGTH)
+                                          port map(RASrc,                                                                                                                
+                                                   ir_out(20 downto 16),                                                                                                              
+                                                   ir_out(15 downto 11),                                                                                                    
+                                                   read_register_2);                                                                                                        
     
     ALU_MPIS32               : alu port map (A, 
                                              B,               
@@ -246,7 +259,8 @@ begin
                                                       PCWriteCond, 
                                                       BNECond,      
                                                       PCWrite,      
-                                                      IorD,        
+                                                      IorD,
+                                                      RASrc,        
                                                       MemRead,      
                                                       MemWrite,     
                                                       MemtoReg,    
@@ -286,7 +300,7 @@ begin
                                        port map(RegDst,
                                                 ir_out(20 downto 16),
                                                 ir_out(15 downto 11),
-                                                REG_RA_ADDRES,
+                                                ir_out(10 downto 6),
                                                 "XXXXX",
                                                 WriteAddrs);
                                                 
