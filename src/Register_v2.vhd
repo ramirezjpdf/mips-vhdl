@@ -50,12 +50,15 @@ architecture Behavioral of Register_v2 is
     signal reg_file : reg := REG_INIT_STATE; --initialize registers with zeros
 
 begin
+    process(ReadAddrs1, ReadAddrs2) is
+    begin
+        ReadData1 <= reg_file(to_integer(unsigned(ReadAddrs1)));
+        ReadData2 <= reg_file(to_integer(unsigned(ReadAddrs2)));
+    end process;
+
     process (CLK) is
     begin
         if rising_edge(CLK) then
-            ReadData1 <= reg_file(to_integer(unsigned(ReadAddrs1)));
-            ReadData2 <= reg_file(to_integer(unsigned(ReadAddrs2)));
-        
             if ((RegWrite = '1') and (WriteAddrs /= REG_ZERO_ADDRS)) then
                 reg_file(to_integer(unsigned(WriteAddrs))) <= WriteData;
             end if;
