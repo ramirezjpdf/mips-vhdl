@@ -114,7 +114,7 @@ architecture struct of mips32_struct is
          out_data: out std_logic_vector(data_length - 1 downto 0));
     end component;
     
-    component fpu is
+    component fpu_divadd is
         port (
             clk_i             : in std_logic;
     
@@ -370,7 +370,7 @@ begin
                                                     FPU_RESULT,                                                 
                                                     ALUOUT_IN);                                                        
     
-    fp_unit                   : fpu port map (CLK,
+    fp_unit                   : fpu_divadd port map (CLK,
                                                 A,
                                                 B,
                                               FPU_CONTROL_SIGNAL,
