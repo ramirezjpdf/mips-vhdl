@@ -107,7 +107,12 @@ begin
                         alu_control_out_signal <= "XXXX";        
                         fpu_control_out_signal <= FP_SQR_CONTROL;
                         jr_signal <= DEASSERTED;                                       
-                                            
+                    
+                    when FP_DIVADD_FUNCT  =>                        
+                        alu_control_out_signal <= "XXXX";                                
+                        fpu_control_out_signal <= FP_DIVADD_CONTROL;
+                        jr_signal <= DEASSERTED;                                        
+                                                                        
                     when others => 
                         alu_control_out_signal <= "XXXX";
                         fpu_control_out_signal <= "XXX";
