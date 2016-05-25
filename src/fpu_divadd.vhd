@@ -449,9 +449,9 @@ begin
             elsif fpu_op_i="101" then
                 s_output1     <= post_norm_divadd_output;
                 s_ine_o     <= post_norm_divadd_ine_o;			
-			else
-				s_output1 	<= (others => '0');
-				s_ine_o 		<= '0';
+--			else
+--				s_output1 	<= (others => '0');
+--				s_ine_o 		<= '0';
 			end if;
 		end if;
 	end process;	
