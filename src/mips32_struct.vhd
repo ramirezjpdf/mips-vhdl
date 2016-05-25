@@ -361,7 +361,7 @@ begin
     out_led_reg_special       : reg_special generic map(MIPS32_DATA_LENGTH)
                                             port map(CLK,
                                                      OutLedWrite,
-                                                     ALUresult,
+                                                     FPU_RESULT,
                                                      LED);
                                                      
     aluout_source_mux         : mux_one generic map(MIPS32_DATA_LENGTH)
