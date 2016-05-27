@@ -71,7 +71,7 @@ architecture behavioral of s7segmentos is
 begin
 	process(CLK)
 	   function to_display_digit(hex_data : in std_logic_vector(3 downto 0))
-                               return std_logic_vector(7 downto 0) is
+                               return std_logic_vector is
        begin
            return SEVENS(to_integer(unsigned(hex_data)));
        end to_display_digit;

@@ -61,7 +61,6 @@ add $s0, $s1, $s0
 sw $s0, 10($t1)
 lw $s2, 10($t1) 
 
-
 13/05/2016
 
 Floating-point instructions  
@@ -75,3 +74,39 @@ instruction   opcode    fmt      rt       rs       rd     funct
 
 The 5 bits 'fmt' field determine whether the operation is single precision (10000) or double precision (10001). 
 In this project we only work with single precision.
+
+18/05/2016
+FPU Test Instructions:
+
+Note: In memory positions 14 and 15, there are 2.0 and 3.25, respectively,
+in IEEE 754 single precision floating point format.
+
+X: LW $T0, 14($ZERO)
+LW $T1, 15($ZERO)
+ADD.S $T2, $T0, $T1
+OUT_LED
+J X
+
+X: LW $T0, 14($ZERO)
+LW $T1, 15($ZERO)
+SUB.S $T2, $T0, $T1
+OUT_LED
+J X
+
+X: LW $T0, 14($ZERO)
+LW $T1, 15($ZERO)
+MUL.S $T2, $T0, $T1
+OUT_LED
+J X
+
+X: LW $T0, 14($ZERO)
+LW $T1, 15($ZERO)
+DIV.S $T2, $T0, $T1
+OUT_LED
+J X
+
+X: LW $T0, 14($ZERO)
+LW $T1, 15($ZERO)
+SQR.S $T2, $T0, $T1
+OUT_LED
+J X
