@@ -23,3 +23,6 @@ register_v2
 *.vcd
 
 *.*~
+
+# modelsim temp files
+*.bak
