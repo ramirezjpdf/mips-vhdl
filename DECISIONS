@@ -121,3 +121,9 @@ The plan is to be R[rd] = R[rs] / R[rt] + R[rd]
 format:
 31____26_25____21_20____16_15_____11_10_____6_5______0
 |__OP__|_|_fmt__|_|__rs__|_|__rt__|__|__rd__|_|unused|
+
+*note - fpuresult directly wired on fpu_b input, results in
+error. fpuresultkeeps changing until gives the right result.
+but fpu needs input to remain the same.
+but wiht the changes, the fpu_b input changes along.
+fix this

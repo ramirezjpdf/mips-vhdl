@@ -161,9 +161,9 @@ begin
                      current_state <= DIVADD_ADD_FP_EXECUTION;
                 when DIVADD_ADD_FP_EXECUTION =>
                      if fpu_ready = '1' then 
-                        current_state <= DIVADD_ADD_FP_EXECUTION;
-                     else
                         current_state <= FP_TYPE_COMPLETION;
+                     else
+                        current_state <= DIVADD_ADD_FP_EXECUTION;
                      end if;
 
                 -- OTHERS
