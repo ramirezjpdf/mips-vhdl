@@ -44,7 +44,7 @@ architecture struct of mips32_struct is
     
     component alu_control is
         port(
-                 alu_op : in std_logic_vector (1 downto 0);
+                 alu_op : in std_logic_vector (2 downto 0);
                  funct  : in std_logic_vector (5 downto 0);
                  alu_control_out_signal : out std_logic_vector(3 downto 0);
                  fpu_control_out_signal : out std_logic_vector(2 downto 0);
@@ -69,7 +69,7 @@ architecture struct of mips32_struct is
             ir_write      : out std_logic;
             reg_write     : out std_logic;
             reg_dst       : out std_logic_vector (1 downto 0);
-            alu_op        : out std_logic_vector (1 downto 0);
+            alu_op        : out std_logic_vector (2 downto 0);
             alu_src_a     : out std_logic;
             alu_src_b     : out std_logic_vector (1 downto 0);
             aluout_src    : out std_logic;
@@ -162,20 +162,21 @@ architecture struct of mips32_struct is
     end component;
     
     --Control signals
-    signal ALUop,  ALUSrcB, PCSource, MemtoReg, RegDst      : STD_LOGIC_VECTOR(1 downto 0);
+    signal ALUSrcB, PCSource, MemtoReg, RegDst     : STD_LOGIC_VECTOR(1 downto 0);
+    signal ALUop                                   : STD_LOGIC_VECTOR(2 downto 0);
     signal BNECond, PCWriteCond, PCWrite, IorD, RegWrite,
            MemWrite, MemRead, IRWrite, ALUSrcA, OutLedWrite,
            ALUOUT_SRC, START_FPU, FPU_READY, RASrc : STD_LOGIC;
     
     --Memory signals
-    signal Mem_Address, MemData : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
+    signal Mem_Address, MemData : STD_LOGIC_VECTOR (31 downto 0) := (others => '0');
     
     --Register file signals
-    signal WriteAddrs, read_register_1, read_register_2 : STD_LOGIC_VECTOR (4 downto 0) := "00000";
-    signal RegWriteData, ReadData1, ReadData2 : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
+    signal WriteAddrs, read_register_1, read_register_2 : STD_LOGIC_VECTOR (4 downto 0) := (others => '0');
+    signal RegWriteData, ReadData1, ReadData2 : STD_LOGIC_VECTOR (31 downto 0) := (others => '0');
     
     --ALU signals
-    signal A, B, ALUresult : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
+    signal A, B, ALUresult : STD_LOGIC_VECTOR (31 downto 0) := (others => '0');
     signal Zero : STD_LOGIC;
     
     --ALU control signals
@@ -194,13 +195,13 @@ architecture struct of mips32_struct is
     --alu signals
     signal a_reg_out : std_logic_vector(31 downto 0); 
     signal b_reg_out : std_logic_vector(31 downto 0); 
-    signal SignExt16_32 : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
+    signal SignExt16_32 : STD_LOGIC_VECTOR (31 downto 0) := (others => '0');
     
     --aluout signals
-    signal ALU_OUT_out_data, ALUOUT_IN : STD_LOGIC_VECTOR (31 downto 0) := x"00000000";
+    signal ALU_OUT_out_data, ALUOUT_IN : STD_LOGIC_VECTOR (31 downto 0) := (others => '0');
     
     --fpu signals
-    signal FPU_RESULT : STD_LOGIC_VECTOR (31 DOWNTO 0) := X"00000000";
+    signal FPU_RESULT : STD_LOGIC_VECTOR (31 DOWNTO 0) := (others => '0');
 
     --mdr signals
     signal mdr_out : STD_LOGIC_VECTOR (31 downto 0);
@@ -334,7 +335,7 @@ begin
                                                 b_reg_out,
                                                 x"00000001",
                                                 SignExt16_32,
-                                                SignExt16_32,
+                                                FPU_RESULT,
                                                 B);
 
     ALU_OUT                  : reg_aux port map(CLK,

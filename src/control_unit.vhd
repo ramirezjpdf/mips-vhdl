@@ -21,7 +21,7 @@ entity control_unit is
         ir_write      : out std_logic;
         reg_write     : out std_logic;
         reg_dst       : out std_logic_vector (1 downto 0);
-        alu_op        : out std_logic_vector (1 downto 0);
+        alu_op        : out std_logic_vector (2 downto 0);
         alu_src_a     : out std_logic;
         alu_src_b     : out std_logic_vector (1 downto 0);
         aluout_src    : out std_logic;
@@ -33,32 +33,37 @@ end control_unit;
 
 architecture behav of control_unit is
 
-subtype state is integer range 0 to 16;
+subtype state is integer range 0 to 20;
 
 -- GENERAL STATES
-constant INSTRUCTION_FETCH       : state := 0;
-constant INST_DECODE_REG_READ    : state := 1;
+constant INSTRUCTION_FETCH              : state := 0;
+constant INST_DECODE_REG_READ           : state := 1;
 -- LW OR SW AND ADDI STATES 
-constant MEM_ADDR_COMP_ADDI_EXEC : state := 2;
-constant LW_MEM_ACCESS            : state := 3;
-constant MEM_READ_COMPLETION     : state := 4;
-constant SW_MEM_ACCESS            : state := 5;
-constant ADDI_COMPLETION         : state := 12;
+constant MEM_ADDR_COMP_ADDI_EXEC        : state := 2;
+constant LW_MEM_ACCESS                  : state := 3;
+constant MEM_READ_COMPLETION            : state := 4;
+constant SW_MEM_ACCESS                  : state := 5;
+constant ADDI_COMPLETION                : state := 12;
 -- R-TYPE ARITH AND LOGIC STATES
-constant EXECUTION               : state := 6;
-constant R_TYPE_COMPLETION       : state := 7;
--- FP EXECUTION STATES
-constant FP_PRE_EXECUTION        : state := 16;
-constant FP_EXECUTION            : state := 14;
-constant FP_TYPE_COMPLETION      : state := 15;
+constant EXECUTION                      : state := 6;
+constant R_TYPE_COMPLETION              : state := 7;
+-- FP EXECUTION STATES  
+constant FP_PRE_EXECUTION               : state := 16;
+constant FP_EXECUTION                   : state := 14;
+constant FP_TYPE_COMPLETION             : state := 15;
 -- BRANCH STATES
-constant BEQ_COMPLETION          : state := 8;
-constant BNE_COMPLETION          : state := 11;
+constant BEQ_COMPLETION                 : state := 8;
+constant BNE_COMPLETION                 : state := 11;
 -- JUMP STATES
-constant JUMP_COMPLETION         : state := 9;
-constant JAL_COMPLETION          : state := 10;
+constant JUMP_COMPLETION                : state := 9;
+constant JAL_COMPLETION                 : state := 10;
 -- OUT LED STATES
-constant OUT_LED_COMPLETION      : state := 13;
+constant OUT_LED_COMPLETION             : state := 13;
+-- DIVADD STATES
+constant DIV_FP_PRE_EXECUTION           : state := 17;
+constant DIV_FP_EXECUTION               : state := 18;
+constant DIVADD_ADD_FP_PRE_EXECUTION    : state := 19;
+constant DIVADD_ADD_FP_EXECUTION        : state := 20;
 
 
 -- CURRENT_STATE
@@ -90,6 +95,8 @@ begin
                             current_state <= JAL_COMPLETION;
                         when OUT_LED =>
                             current_state <= OUT_LED_COMPLETION;
+                        when DIVADD => 
+                            current_state <= DIV_FP_PRE_EXECUTION;
                         when others =>
                             current_state <= INSTRUCTION_FETCH;
                     end case;
@@ -140,6 +147,24 @@ begin
                 -- OUT_LED STATES
                 when OUT_LED_COMPLETION =>
                     current_state <= INSTRUCTION_FETCH;
+
+                -- DIVADD
+                when DIV_FP_PRE_EXECUTION =>
+                    current_state <= DIV_FP_EXECUTION;
+                when DIV_FP_EXECUTION =>
+                    if fpu_ready = '1' then
+                        current_state <= DIVADD_ADD_FP_PRE_EXECUTION;
+                    else
+                        current_state <= DIV_FP_EXECUTION;
+                    end if;
+                when DIVADD_ADD_FP_PRE_EXECUTION =>
+                     current_state <= DIVADD_ADD_FP_EXECUTION;
+                when DIVADD_ADD_FP_EXECUTION =>
+                     if fpu_ready = '1' then 
+                        current_state <= DIVADD_ADD_FP_EXECUTION;
+                     else
+                        current_state <= FP_TYPE_COMPLETION;
+                     end if;
 
                 -- OTHERS
                 when others =>
@@ -489,6 +514,84 @@ begin
                 start_fpu     <= DEASSERTED;
                 out_led_write <= ASSERTED;
 
+            -- DIVADD states
+            when DIV_FP_PRE_EXECUTION       =>
+                pc_write_cond <= DEASSERTED;                             
+                bne_cond      <= DEASSERTED;                             
+                pc_write      <= DEASSERTED;                             
+                i_or_d        <= DEASSERTED;
+                RASrc         <= ASSERTED;                             
+                mem_read      <= DEASSERTED;                             
+                mem_write     <= DEASSERTED;                             
+                mem_to_reg    <= ALU_OUT_MEM_TO_REG;                     
+                ir_write      <= DEASSERTED;                             
+                reg_write     <= DEASSERTED;                             
+                reg_dst       <= RA_REG_DST;                             
+                alu_op        <= DIV_FP;                            
+                alu_src_a     <= ASSERTED;                               
+                alu_src_b     <= B_ALU_SRC_B;  
+                aluout_src    <= ASSERTED;                         
+                pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= ASSERTED;           
+                out_led_write <= DEASSERTED;
+            when DIV_FP_EXECUTION            =>                  
+                pc_write_cond <= DEASSERTED;              
+                bne_cond      <= DEASSERTED;              
+                pc_write      <= DEASSERTED;              
+                i_or_d        <= DEASSERTED;
+                RASrc         <= ASSERTED;              
+                mem_read      <= DEASSERTED;              
+                mem_write     <= DEASSERTED;              
+                mem_to_reg    <= ALU_OUT_MEM_TO_REG;      
+                ir_write      <= DEASSERTED;              
+                reg_write     <= DEASSERTED;              
+                reg_dst       <= RA_REG_DST;              
+                alu_op        <= DIV_FP;             
+                alu_src_a     <= ASSERTED;                
+                alu_src_b     <= B_ALU_SRC_B; 
+                aluout_src    <= ASSERTED;            
+                pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;    
+                out_led_write <= DEASSERTED;
+            when DIVADD_ADD_FP_PRE_EXECUTION       =>
+                pc_write_cond <= DEASSERTED;                             
+                bne_cond      <= DEASSERTED;                             
+                pc_write      <= DEASSERTED;                             
+                i_or_d        <= DEASSERTED;
+                RASrc         <= ASSERTED;                             
+                mem_read      <= DEASSERTED;                             
+                mem_write     <= DEASSERTED;                             
+                mem_to_reg    <= ALU_OUT_MEM_TO_REG;                     
+                ir_write      <= DEASSERTED;                             
+                reg_write     <= DEASSERTED;                             
+                reg_dst       <= RA_REG_DST;                             
+                alu_op        <= ADD_FP;                            
+                alu_src_a     <= ASSERTED;                               
+                alu_src_b     <= FPU_RESULT_ALU_SRC_B;  
+                aluout_src    <= ASSERTED;                         
+                pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= ASSERTED;           
+                out_led_write <= DEASSERTED;
+            when DIVADD_ADD_FP_EXECUTION       =>
+                pc_write_cond <= DEASSERTED;                             
+                bne_cond      <= DEASSERTED;                             
+                pc_write      <= DEASSERTED;                             
+                i_or_d        <= DEASSERTED;
+                RASrc         <= ASSERTED;                             
+                mem_read      <= DEASSERTED;                             
+                mem_write     <= DEASSERTED;                             
+                mem_to_reg    <= ALU_OUT_MEM_TO_REG;                     
+                ir_write      <= DEASSERTED;                             
+                reg_write     <= DEASSERTED;                             
+                reg_dst       <= RA_REG_DST;                             
+                alu_op        <= ADD_FP;                            
+                alu_src_a     <= ASSERTED;                               
+                alu_src_b     <= FPU_RESULT_ALU_SRC_B;  
+                aluout_src    <= ASSERTED;                         
+                pc_source     <= ALU_RESULT_PC_SOURCE;
+                start_fpu     <= DEASSERTED;           
+                out_led_write <= DEASSERTED;
+ 
             -- OTHERS
             when others      =>
                 pc_write_cond <= 'X'; 
@@ -497,14 +600,14 @@ begin
                 i_or_d        <= 'X';
                 mem_read      <= 'X';
                 mem_write     <= 'X';
-                mem_to_reg    <= "XX";
+                mem_to_reg    <= (others => 'X');
                 ir_write      <= 'X';
                 reg_write     <= 'X';
-                reg_dst       <= "XX";
-                alu_op        <= "XX";
+                reg_dst       <= (others => 'X');
+                alu_op        <= (others => 'X');
                 alu_src_a     <= 'X';
-                alu_src_b     <= "XX";
-                pc_source     <= "XX";
+                alu_src_b     <= (others => 'X');
+                pc_source     <= (others => 'X');
                 out_led_write <= 'X';
         end case;
     

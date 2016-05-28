@@ -23,10 +23,12 @@ package const is
     constant SRL_CONTROL : std_logic_vector (3 downto 0) := "0100";
 
     -- ALU_OP
-    constant LW_OR_SW_ADD    : std_logic_vector (1 downto 0) := "00";
-    constant BEQ_OR_BNE_SUB  : std_logic_vector (1 downto 0) := "01";
-    constant R_TYPE_INST     : std_logic_vector (1 downto 0) := "10";
-    constant FP_TYPE_INST    : std_logic_vector (1 downto 0) := "11";
+    constant LW_OR_SW_ADD    : std_logic_vector (2 downto 0) := "000";
+    constant BEQ_OR_BNE_SUB  : std_logic_vector (2 downto 0) := "001";
+    constant R_TYPE_INST     : std_logic_vector (2 downto 0) := "010";
+    constant FP_TYPE_INST    : std_logic_vector (2 downto 0) := "011";
+    constant DIV_FP          : std_logic_vector (2 downto 0) := "100";
+    constant ADD_FP          : std_logic_vector (2 downto 0) := "101";
 
     -- FUNCT
     constant AND_FUNCT    : std_logic_vector (5 downto 0) := "100100";
@@ -82,6 +84,7 @@ package const is
     constant ADDI    : std_logic_vector (5 downto 0) := "001000";
     constant OUT_LED : std_logic_vector (5 downto 0) := "100000";
     constant FP_TYPE : std_logic_vector (5 downto 0) := "010001";
+    constant DIVADD  : std_logic_vector (5 downto 0) := "010010";
     
     -- CONTROL LINES
     constant DEASSERTED              : std_logic := '0';
@@ -95,7 +98,8 @@ package const is
     constant B_ALU_SRC_B             : std_logic_vector (1 downto 0) := "00";
     constant FOUR_ALU_SRC_B          : std_logic_vector (1 downto 0) := "01";
     constant IMMED_ALU_SRC_B         : std_logic_vector (1 downto 0) := "10";
-    constant BRANCH_ADDR_ALU_SRC_B   : std_logic_vector (1 downto 0) := "11";
+    constant FPU_RESULT_ALU_SRC_B    : std_logic_vector (1 downto 0) := "11";
+    constant BRANCH_ADDR_ALU_SRC_B   : std_logic_vector (1 downto 0) := IMMED_ALU_SRC_B;
     constant ALU_RESULT_PC_SOURCE    : std_logic_vector (1 downto 0) := "00";
     constant ALU_OUT_PC_SOURCE       : std_logic_vector (1 downto 0) := "01";
     constant JUMP_PC_SOURCE          : std_logic_vector (1 downto 0) := "10";

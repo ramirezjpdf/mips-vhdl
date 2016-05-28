@@ -110,3 +110,14 @@ LW $T1, 15($ZERO)
 SQR.S $T2, $T0, $T1
 OUT_LED
 J X
+
+-- Complex Instruction
+For now,
+name   |       meaning                 |  OPCODE  |
+DIVADD | R[rd] = R[rs] / R[rt] + R[rt] |  010010  |
+
+The plan is to be R[rd] = R[rs] / R[rt] + R[rd]
+
+format:
+31____26_25____21_20____16_15_____11_10_____6_5______0
+|__OP__|_|_fmt__|_|__rs__|_|__rt__|__|__rd__|_|unused|
