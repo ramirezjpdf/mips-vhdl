@@ -75,7 +75,8 @@ architecture struct of mips32_struct is
             aluout_src    : out std_logic;
             pc_source     : out std_logic_vector (1 downto 0);
             start_fpu     : out std_logic;
-            out_led_write : out std_logic
+            out_led_write : out std_logic;
+            fpu_feedback  : out std_logic
         );
     end component;
     
@@ -166,7 +167,8 @@ architecture struct of mips32_struct is
     signal ALUop                                   : STD_LOGIC_VECTOR(2 downto 0);
     signal BNECond, PCWriteCond, PCWrite, IorD, RegWrite,
            MemWrite, MemRead, IRWrite, ALUSrcA, OutLedWrite,
-           ALUOUT_SRC, START_FPU, FPU_READY, RASrc : STD_LOGIC;
+           ALUOUT_SRC, START_FPU, FPU_READY, RASrc,
+           FpuFeedback                             : STD_LOGIC;
     
     --Memory signals
     signal Mem_Address, MemData : STD_LOGIC_VECTOR (31 downto 0) := (others => '0');
@@ -202,6 +204,7 @@ architecture struct of mips32_struct is
     
     --fpu signals
     signal FPU_RESULT : STD_LOGIC_VECTOR (31 DOWNTO 0) := (others => '0');
+    signal fpu_feedback_reg_wire : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
     --mdr signals
     signal mdr_out : STD_LOGIC_VECTOR (31 downto 0);
@@ -274,7 +277,8 @@ begin
                                                       ALUOUT_SRC,     
                                                       PCSource,
                                                       START_FPU,
-                                                      OutLedWrite);
+                                                      OutLedWrite,
+                                                      FpuFeedback);
 
     pc_write_signal <= PCWrite or (PCWriteCond and(BNECond xor Zero));
     PC                       : reg_special port map (CLK,
@@ -335,7 +339,7 @@ begin
                                                 b_reg_out,
                                                 x"00000001",
                                                 SignExt16_32,
-                                                FPU_RESULT,
+                                                fpu_feedback_reg_wire,
                                                 B);
 
     ALU_OUT                  : reg_aux port map(CLK,
@@ -379,4 +383,10 @@ begin
                                               FPU_RESULT,
                                               START_FPU,
                                               FPU_READY);
+
+    fpu_feedback_reg_special  : reg_special generic map(MIPS32_DATA_LENGTH)
+                                            port map(CLK,
+                                                     FpuFeedback,
+                                                     FPU_RESULT,
+                                                     fpu_feedback_reg_wire);
 end architecture;
